@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+  <div class="bg-white p-8 rounded shadow w-96">
+    <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
+
+    <form id="registerForm" class="space-y-4">
+      <input type="text" id="name" placeholder="Nama"
+        class="w-full border p-2 rounded" required>
+
+      <input type="email" id="email" placeholder="Email"
+        class="w-full border p-2 rounded" required>
+
+      <input type="password" id="password" placeholder="Password"
+        class="w-full border p-2 rounded" required>
+
+      <button type="submit"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+        Register
+      </button>
+    </form>
+
+    <p class="text-sm mt-4 text-center">
+      Sudah punya akun?
+      <a href="login.html" class="text-blue-600">Login</a>
+    </p>
+  </div>
+
+<script>
+$("#registerForm").submit(function(e) {
+  e.preventDefault();
+
+  $.ajax({
+    url: "http://127.0.0.1:8000/api/register",
+    method: "POST",
+    data: {
+      name: $("#name").val(),
+      email: $("#email").val(),
+      password: $("#password").val()
+    },
+    success: function(res) {
+      alert("Register berhasil, silakan login");
+      window.location.href = "login.html";
+    },
+    error: function(err) {
+      alert("Register gagal");
+    }
+  });
+});
+</script>
+
+</body>
+</html>

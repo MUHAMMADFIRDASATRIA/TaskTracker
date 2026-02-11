@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Project</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+<div class="bg-white w-full max-w-lg p-6 rounded shadow">
+  <h1 class="text-2xl font-bold mb-6">Tambah Project</h1>
+
+  <form id="projectForm" class="space-y-4">
+
+    <!-- TITLE -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Judul Project</label>
+      <input type="text" id="title" required
+        class="w-full border p-2 rounded focus:ring focus:ring-blue-300">
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Deskripsi</label>
+      <textarea id="description" rows="4"
+        class="w-full border p-2 rounded focus:ring focus:ring-blue-300"></textarea>
+    </div>
+
+    <!-- STATUS -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Status</label>
+      <select id="status"
+        class="w-full border p-2 rounded focus:ring focus:ring-blue-300">
+        <option value="ongoing">Ongoing</option>
+        <option value="done">Done</option>
+        <option value="pending">Pending</option>
+      </select>
+    </div>
+
+    <!-- BUTTON -->
+    <div class="flex justify-end space-x-2">
+      <a href="projects.html"
+        class="px-4 py-2 border rounded hover:bg-gray-100">
+        Batal
+      </a>
+
+      <button type="submit"
+        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        Simpan
+      </button>
+    </div>
+
+  </form>
+</div>
+
+<script>
+const API_URL = "http://127.0.0.1:8000/api/projects";
+
+// SUBMIT FORM
+$("#projectForm").submit(function(e) {
+  e.preventDefault();
+
+  const token = localStorage.getItem("api_token");
+
+  $.ajax({
+    url: API_URL,
+    method: "POST",
+    headers: {
+      "Authorization": token ? "Bearer " + token : ""
+    },
+    data: {
+      title: $("#title").val(),
+      description: $("#description").val(),
+      status: $("#status").val()
+    },
+    success: function() {
+      alert("Project berhasil ditambahkan");
+      window.location.href = "projects.html";
+    },
+    error: function(err) {
+      alert("Gagal menambahkan project");
+      console.log(err.responseText);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

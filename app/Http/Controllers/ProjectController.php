@@ -12,12 +12,26 @@ class ProjectController extends Controller
     {
         $user = $request->attributes->get('auth_user');
 
-        $projects = project::where('user_id', $user->id)->get();
+        $query = project::where('user_id', $user->id);
+
+        // $search = $request->input('search');
+
+        if ($request->filled('search'))
+        {
+            $query = project::query()
+                ->where('user_id', $user->id)
+                ->when($request->search, function ($q) use ($request) {
+                    $q->where('title', 'ILIKE', "%{$request->search}%");
+                });
+        }
+
+        $projects = $query->get();
 
         return response()->json([
             'succes'=>true,
             'data' =>$projects
         ]);
+
     }
 
     public function createProject (Request $request)

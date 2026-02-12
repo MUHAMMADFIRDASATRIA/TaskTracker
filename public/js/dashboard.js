@@ -16,6 +16,25 @@ function loadDashboard() {
             if (xhr.status === 401) logout();
         }
     });
+
+    $.ajax({
+        url: `${API_URL}/profile`,
+        method: "GET",
+        headers: getAuthHeader(),
+        success: function (res) {
+            const user = res.data;
+            $("#header-name").text(user.name);
+            $("#header-avatar").text(user.name.charAt(0).toUpperCase());
+        },
+        error: function (xhr) {
+            console.error(xhr.responseText);
+            if (xhr.status === 401) {
+                logout();
+            } else {
+                alert("Gagal memuat data profil");
+            }
+        }
+    });
 }
 
 /* ===========================

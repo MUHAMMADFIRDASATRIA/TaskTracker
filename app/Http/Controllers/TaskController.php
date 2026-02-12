@@ -24,14 +24,6 @@ class TaskController extends Controller
             ]);
         }
 
-        // if($project->user_id !== $user->id)
-        // {
-        //     return response()->json([
-        //         'success'=>false,
-        //         'message'=>'gak dapet akses bro'
-        //     ]);
-        // }
-
         $tasks = task::where('project_id', $projectId)->get();
 
         return response()->json([

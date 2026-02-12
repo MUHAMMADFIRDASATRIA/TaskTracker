@@ -34,6 +34,27 @@ class ProjectController extends Controller
 
     }
 
+    public function getProjectById (Request $request, $projectId)
+    {
+        $user = $request->attributes->get('auth_user');
+
+        $project = project::where('id', $projectId)
+                    ->where('user_id', $user->id)
+                    ->first();
+
+        if (!$project) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Project tidak ditemukan atau tidak memiliki akses'
+            ], 403);
+        }
+
+        return response()->json([
+            'success'=>true,
+            'data'=>$project
+        ]);
+    }
+
     public function createProject (Request $request)
     {
         $user = $request->attributes->get('auth_user');

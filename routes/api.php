@@ -19,6 +19,7 @@ Route::middleware('auth.api')->group(function(){
     Route::DELETE('/profile', [ProfileController::class, 'deleteProfile']);
 
     Route::GET('/users/project', [ProjectController::class,'showProject']);
+    Route::GET('/users/project/{projectId}', [ProjectController::class,'getProjectById']);
     Route::POST('/users/project/create', [ProjectController::class,'createProject']);
     Route::PUT('/users/project/{projectId}/update', [ProjectController::class,'updateProject']);
     Route::DELETE('/users/project/{projectId}', [ProjectController::class,'deleteProject']);

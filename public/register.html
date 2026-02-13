@@ -108,11 +108,17 @@
     </div>
 
     <!-- Script -->
+    <script src="js/auth.js"></script>
     <script>
         $(document).ready(function() {
+            handleRegister();
             lucide.createIcons();
+
+            // Auto-redirect jika sudah login - dinonaktifkan
+            // if (getToken()) {
+            //     window.location.href = "dashboard.html";
+            // }
         });
     </script>
-    <script src="js/register.js"></script>
 </body>
 </html>

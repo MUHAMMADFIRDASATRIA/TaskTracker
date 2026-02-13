@@ -118,7 +118,13 @@
 
 <script src="/js/auth.js"></script>
 <script src="/js/dashboard.js"></script>
-<script>lucide.createIcons();</script>
+<script>
+    $(document).ready(function(){
+        checkAuth();
+        loadDashboard();
+        lucide.createIcons();
+    });
+</script>
 
 </body>
 </html>

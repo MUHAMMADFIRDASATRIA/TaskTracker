@@ -1,11 +1,32 @@
-const API_URL = "http://127.0.0.1:8000/api";
-
 $(document).ready(function () {
 
     /* ======================
        GET PROJECT ID
     ====================== */
     const projectId = new URLSearchParams(window.location.search).get("project_id");
+    let projectDeadline = "-";
+    let totalTasks = 0;
+    let completedTasks = 0;
+
+    function updateProjectUI(total, completed, deadlineStr) {
+        const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+        const pendingTasks = total - completed;
+
+        $("#hero-percentage").text(`${percentage}%`);
+        $("#stat-completed").text(completed);
+        $("#stat-pending").text(pendingTasks);
+        $("#stat-deadline").text(deadlineStr);
+        $("#badge-deadline").text(deadlineStr);
+        $("#badge-total").text(`${total} Tugas`);
+
+        const circle = document.getElementById("progress-ring");
+        if (circle) {
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            const offset = circumference - (percentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+    }
 
     if (!projectId) {
         alert("Project ID tidak ditemukan");
@@ -38,7 +59,9 @@ $(document).ready(function () {
                         ? project.description
                         : "-"
                 );
-                $("#hero-deadline").text(project.tenggat);
+                projectDeadline = project.tenggat ?? "-";
+                $("#badge-status").text(project.status ?? "-");
+                updateProjectUI(totalTasks, completedTasks, projectDeadline);
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
@@ -95,10 +118,9 @@ $(document).ready(function () {
                     container.append(renderTask(task));
                 });
 
-                $("#hero-tasks-count").text(tasks.length);
-                const finishedTasks = tasks.filter(t => t.finish).length;
-                const progress = tasks.length > 0 ? Math.round((finishedTasks / tasks.length) * 100) : 0;
-                $("#hero-progress").text(`${progress}% selesai (${finishedTasks}/${tasks.length})`);
+                totalTasks = tasks.length;
+                completedTasks = tasks.filter(t => t.finish).length;
+                updateProjectUI(totalTasks, completedTasks, projectDeadline);
             },
             error: function (xhr) {
                 console.error(xhr.responseText);

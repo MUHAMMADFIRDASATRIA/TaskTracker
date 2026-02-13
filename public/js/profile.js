@@ -9,6 +9,7 @@ function loadProfile() {
         method: "GET",
         headers: getAuthHeader(),
         success: function (res) {
+            console.log("Profile Response:", res);
             const user = res.data;
 
             // Header
@@ -25,7 +26,7 @@ function loadProfile() {
             $("#email").val(user.email);
         },
         error: function (xhr) {
-            console.error(xhr.responseText);
+            console.error("Profile Error:", xhr.status, xhr.responseText);
 
             if (xhr.status === 401) {
                 logout();

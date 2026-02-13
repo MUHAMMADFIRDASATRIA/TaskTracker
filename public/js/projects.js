@@ -1,7 +1,7 @@
 const API_URL = "http://127.0.0.1:8000/api";
 
 /* ===========================
-   LOAD PROJECT LIST
+   LOAD PROJECT LIST WITH PROGRESS
 =========================== */
 function loadProjects() {
     $.ajax({
@@ -24,8 +24,9 @@ function loadProjects() {
                 return;
             }
 
+            // Load progress untuk setiap project
             res.data.forEach(project => {
-                $("#projectList").append(projectCard(project));
+                loadTasksForProgress(project);
             });
             
             lucide.createIcons();
@@ -37,10 +38,44 @@ function loadProjects() {
 }
 
 /* ===========================
+   LOAD TASKS TO CALCULATE PROGRESS
+=========================== */
+function loadTasksForProgress(project) {
+    $.ajax({
+        url: `${API_URL}/users/project/${project.id}/tasks`,
+        method: "GET",
+        headers: getAuthHeader(),
+        success: function (res) {
+            const tasks = res.data ?? [];
+            const totalTasks = tasks.length;
+            const completedTasks = tasks.filter(t => t.finish).length;
+            const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+            // Tambah progress ke project object
+            project.progress = progress;
+            project.tasksInfo = { total: totalTasks, completed: completedTasks };
+
+            // Render card dengan progress yang sudah dihitung
+            $("#projectList").append(projectCard(project));
+            lucide.createIcons();
+        },
+        error: function (xhr) {
+            console.error("Gagal load tasks untuk project " + project.id);
+            // Tetap render card dengan progress 0
+            project.progress = 0;
+            project.tasksInfo = { total: 0, completed: 0 };
+            $("#projectList").append(projectCard(project));
+            lucide.createIcons();
+        }
+    });
+}
+
+/* ===========================
    PROJECT CARD TEMPLATE
 =========================== */
 function projectCard(p) {
     const progress = p.progress || 0; // Default 0% jika tidak ada progress
+    const tasksInfo = p.tasksInfo || { total: 0, completed: 0 };
     return `
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col gap-3">
         <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -64,7 +99,7 @@ function projectCard(p) {
         <div class="bg-slate-50 rounded-lg p-3 space-y-1.5">
             <div class="flex justify-between items-center">
                 <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Progres</span>
-                <span class="text-xs font-bold text-indigo-600">${progress}%</span>
+                <span class="text-xs font-bold text-indigo-600">${progress}% (${tasksInfo.completed}/${tasksInfo.total})</span>
             </div>
             <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
                 <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 h-full transition-all duration-500" style="width: ${Math.min(progress, 100)}%"></div>

@@ -38,10 +38,30 @@ $(document).ready(function () {
                         ? project.description
                         : "-"
                 );
+                $("#hero-deadline").text(project.tenggat);
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
                 alert("Gagal mengambil detail project");
+            }
+        });
+
+        $.ajax({
+            url: `${API_URL}/profile`,
+            method: "GET",
+            headers: getAuthHeader(),
+            success: function (res) {
+                const user = res.data;
+                $("#header-name").text(user.name);
+                $("#header-avatar").text(user.name.charAt(0).toUpperCase());
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                if (xhr.status === 401) {
+                    logout();
+                } else {
+                    alert("Gagal memuat data profil");
+                }
             }
         });
     }
@@ -74,6 +94,11 @@ $(document).ready(function () {
                 tasks.forEach(task => {
                     container.append(renderTask(task));
                 });
+
+                $("#hero-tasks-count").text(tasks.length);
+                const finishedTasks = tasks.filter(t => t.finish).length;
+                const progress = tasks.length > 0 ? Math.round((finishedTasks / tasks.length) * 100) : 0;
+                $("#hero-progress").text(`${progress}% selesai (${finishedTasks}/${tasks.length})`);
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
@@ -208,11 +233,7 @@ $(document).ready(function () {
         })
         .on("click", ".btn-edit", function () {
             const taskId = $(this).data("id");
-            const title = prompt("Judul baru:");
-
-            if (!title) return;
-
-            updateTask(taskId, { title: title });
+            window.location.href = `EditTask.html?task_id=${taskId}&project_id=${projectId}`;
         });
 
 

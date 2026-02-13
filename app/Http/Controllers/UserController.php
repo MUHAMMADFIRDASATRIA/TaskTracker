@@ -26,26 +26,14 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-        // $name = $request->input('name');
-        // $email = $request->input('email');
-        // $password = $request->input('password');
         $apitoken = Str::random(60);
-        // $exptoken = Carbon::now()->addDay();
-   
 
         $user = User::create([
-            // 'name' => $name,
-            // 'email'=> $email,
-            // 'password' => Hash::make($password),
-            // 'api_token' => Hash('sha256', $apitoken),
-            // 'exp_token' => $exptoken
-
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
-            'api_token' => Hash('sha256', $apitoken),
+            'api_token' => hash('sha256', $apitoken),
             'exp_token' => Carbon::now()->addDay()
-            
         ]);
 
         return response()->json([
@@ -53,7 +41,6 @@ class UserController extends Controller
             'message' => 'User created successfully',
             'data' => $user,
             'api_token' => $apitoken,
-            // 'exp_token' => $exptoken
         ], 201);
     }
 

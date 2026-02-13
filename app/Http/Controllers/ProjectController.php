@@ -28,7 +28,7 @@ class ProjectController extends Controller
         $projects = $query->get();
 
         return response()->json([
-            'succes'=>true,
+            'success'=>true,
             'data' =>$projects
         ]);
 

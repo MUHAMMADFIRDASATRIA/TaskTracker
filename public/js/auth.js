@@ -7,7 +7,9 @@ if (!localStorage.getItem("api_token")) {
 
 // helper header auth
 function getAuthHeader() {
+    const token = localStorage.getItem("api_token");
+    console.log("Auth Token:", token); // Debug
     return {
-        Authorization: "Bearer " + localStorage.getItem("api_token")
+        Authorization: "Bearer " + token
     };
 }

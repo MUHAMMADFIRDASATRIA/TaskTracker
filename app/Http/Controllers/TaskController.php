@@ -28,7 +28,7 @@ class TaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => $tasks
+            'data' => $tasks
         ]);
     }
 
@@ -60,7 +60,7 @@ class TaskController extends Controller
 
         return response()->json([
             'success'=>true,
-            'data task'=>$task
+            'data'=>$task
         ], 200);
     }
 

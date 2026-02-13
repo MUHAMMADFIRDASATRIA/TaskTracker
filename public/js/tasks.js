@@ -168,14 +168,17 @@ $(document).ready(function () {
     ====================== */
     function renderTask(task) {
         return `
-        <div class="p-4 flex justify-between items-start gap-4 border-b">
-            <div>
+        <div class="p-4 flex items-start gap-4">
+            <div class="pt-1">
+                <input type="checkbox" class="task-finish h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" data-id="${task.id}" ${task.finish ? "checked" : ""}>
+            </div>
+            <div class="flex-1 min-w-0">
                 <p class="font-semibold text-slate-800">${task.title}</p>
                 <p class="text-sm text-slate-500">
                     ${task.description ? task.description : "-"}
                 </p>
                 <p class="text-xs text-slate-400 mt-1">
-                    Status: ${task.finish ? "Selesai" : "Belum selesai"}
+                    ${task.finish ? "Selesai" : "Belum selesai"}
                 </p>
             </div>
             <div class="flex gap-2">
@@ -194,6 +197,12 @@ $(document).ready(function () {
        EVENTS
     ====================== */
     $("#tasks-list-container")
+        .on("change", ".task-finish", function () {
+            const taskId = $(this).data("id");
+            const finish = $(this).is(":checked");
+
+            updateTask(taskId, { finish: finish });
+        })
         .on("click", ".btn-delete", function () {
             deleteTask($(this).data("id"));
         })

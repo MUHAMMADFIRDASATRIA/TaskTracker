@@ -13,30 +13,25 @@ function loadProjects() {
 
             if (res.data.length === 0) {
                 $("#projectList").html(`
-                    <div class="col-span-full text-center text-slate-500">
-                        Belum ada project
+                    <div class="text-center text-slate-500 py-12">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="inbox" size="48" class="text-slate-300 mb-4"></i>
+                            <p class="text-lg font-medium">Belum ada project</p>
+                        </div>
                     </div>
                 `);
+                lucide.createIcons();
                 return;
             }
 
             res.data.forEach(project => {
                 $("#projectList").append(projectCard(project));
             });
+            
+            lucide.createIcons();
         },
         error: function (xhr) {
             if (xhr.status === 401) logout();
-        }
-    });
-
-    $.ajax({
-        url: `${API_URL}/profile`,
-        method: "GET",
-        headers: getAuthHeader(),
-        success: function (res) {
-            const user = res.data;
-            $("#header-name").text(user.name);
-            $("#header-avatar").text(user.name.charAt(0).toUpperCase());
         }
     });
 }
@@ -45,34 +40,46 @@ function loadProjects() {
    PROJECT CARD TEMPLATE
 =========================== */
 function projectCard(p) {
+    const progress = p.progress || 0; // Default 0% jika tidak ada progress
     return `
-    <div class="bg-white rounded-2xl shadow-xl hover:shadow-indigo-200 transition-all border border-slate-200 p-6 flex flex-col gap-3">
-        <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow">
-                <i data-lucide="folder" size="22"></i>
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col gap-3">
+        <div class="flex items-center gap-3 flex-1 min-w-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-indigo-100 to-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 flex-shrink-0 shadow-sm">
+                <i data-lucide="folder" size="24"></i>
             </div>
-            <div class="flex-1">
-                <h3 class="text-lg font-bold text-slate-800">${p.title}</h3>
-                <p class="text-xs text-slate-400 mt-1">ID: #${p.id}</p>
+            <div class="flex-1 min-w-0">
+                <h3 class="text-base font-bold text-slate-900 truncate">${p.title}</h3>
+                <div class="flex flex-wrap items-center gap-2 mt-1">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-0.5">
+                        <i data-lucide="calendar" size="11"></i> 
+                        ${p.tenggat ? p.tenggat : 'Belum diset'}
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold capitalize">${p.status || 'pending'}</span>
+                </div>
+                <p class="text-xs text-slate-600 mt-0.5 line-clamp-1">${p.description || 'Tidak ada deskripsi'}</p>
             </div>
         </div>
-        <p class="text-sm text-slate-500 mb-2">${p.description ?? '-'}</p>
-        <div class="flex items-center gap-2 mb-2">
-            <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-600 text-xs font-semibold">${p.status}</span>
-            <span class="px-3 py-1 rounded-full bg-rose-100 text-rose-600 text-xs font-semibold">
-                <i data-lucide="calendar" size="14" class="inline-block mr-1"></i>
-                Tenggat: ${p.tenggat ? p.tenggat : '-'}
-            </span>
+
+        <!-- Progress Section -->
+        <div class="bg-slate-50 rounded-lg p-3 space-y-1.5">
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Progres</span>
+                <span class="text-xs font-bold text-indigo-600">${progress}%</span>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 h-full transition-all duration-500" style="width: ${Math.min(progress, 100)}%"></div>
+            </div>
         </div>
-        <div class="flex gap-2 mt-3">
-            <button onclick="openTasks(${p.id})" class="w-full text-sm bg-slate-100 hover:bg-slate-200 rounded-xl py-2 font-semibold flex items-center justify-center gap-2">
-                <i data-lucide="list" size="16"></i> Lihat Tasks
+        
+        <div class="flex gap-1.5 pt-1">
+            <button onclick="viewTasks(${p.id})" class="flex-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg py-1.5 px-2 font-semibold flex items-center justify-center gap-1 transition-colors">
+                <i data-lucide="list" size="14"></i> <span class="hidden sm:inline">Lihat</span>
             </button>
-            <a href="EditProjects.html" onclick="editProject(${p.id})" class="text-indigo-600 hover:bg-indigo-50 rounded-xl px-4 py-2 text-sm font-semibold flex items-center gap-2">
-                <i data-lucide="edit" size="16"></i> Edit
-            </a>
-            <button onclick="deleteProject(${p.id})" class="text-rose-600 hover:bg-rose-50 rounded-xl px-4 py-2 text-sm font-semibold flex items-center gap-2">
-                <i data-lucide="trash-2" size="16"></i> Hapus
+            <button onclick="editProject(${p.id})" class="flex-1 text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg py-1.5 px-2 font-semibold flex items-center justify-center gap-1 transition-colors">
+                <i data-lucide="edit-2" size="14"></i> <span class="hidden sm:inline">Edit</span>
+            </button>
+            <button onclick="deleteProject(${p.id})" class="flex-1 text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg py-1.5 px-2 font-semibold flex items-center justify-center gap-1 transition-colors">
+                <i data-lucide="trash-2" size="14"></i> <span class="hidden sm:inline">Hapus</span>
             </button>
         </div>
     </div>
@@ -80,91 +87,38 @@ function projectCard(p) {
 }
 
 /* ===========================
-   OPEN TASK PAGE
+   VIEW TASKS
 =========================== */
-function openTasks(projectId) {
+function viewTasks(projectId) {
     window.location.href = `tasks.html?project_id=${projectId}`;
 }
-
-/* ===========================
-   ADD PROJECT
-=========================== */
-$("#createProjectForm").on("submit", function (e) {
-    e.preventDefault(); // ⛔ cegah reload halaman
-
-    $.ajax({
-        url: `${API_URL}/users/project/create`,
-        method: "POST",
-        headers: getAuthHeader(),
-        data: {
-            title: $("#title").val(),
-            description: $("#description").val(),
-            tenggat: $("#tenggat").val(),
-            status: $("#status").val()
-        },
-        success: function () {
-            alert("Project berhasil dibuat 🎉");
-            window.location.href = "projects.html";
-        },
-        error: function (xhr) {
-            console.error(xhr.responseText);
-            alert("Gagal membuat project");
-        }
-    });
-});
 
 /* ===========================
    EDIT PROJECT
 =========================== */
 function editProject(id) {
-    $.ajax({
-        url: `${API_URL}/users/project`,
-        method: "GET",
-        headers: getAuthHeader(),
-        success: function (res) {
-            const project = res.data.find(p => p.id === id);
-
-            $("#project_id").val(project.id);
-            $("#title").val(project.title);
-            $("#description").val(project.description);
-            $("#status").val(project.status);
-            $("#tenggat").val(project.tenggat);
-
-            $("#modalTitle").text("Edit Project");
-            $("#projectModal").removeClass("hidden");
-        }
-    });
+    window.location.href = `EditProjects.html?project_id=${id}`;
 }
 
 /* ===========================
    DELETE PROJECT
 =========================== */
 function deleteProject(id) {
-    if (!confirm("Yakin hapus project ini?")) return;
+    if (!confirm("Yakin ingin menghapus proyek ini? Tindakan ini tidak dapat dibatalkan.")) return;
 
     $.ajax({
         url: `${API_URL}/users/project/${id}`,
         method: "DELETE",
         headers: getAuthHeader(),
         success: function () {
+            alert("Proyek berhasil dihapus");
             loadProjects();
+        },
+        error: function (xhr) {
+            console.error(xhr.responseText);
+            alert("Gagal menghapus proyek");
         }
     });
-}
-
-/* ===========================
-   MODAL HELPER
-=========================== */
-function closeModal() {
-    $("#projectModal").addClass("hidden");
-}
-
-function resetForm() {
-    $("#project_id").val("");
-    $("#title").val("");
-    $("#description").val("");
-    $("#status").val("");
-    $("#tenggat").val("");
 }
 
 /* ===========================
@@ -172,4 +126,9 @@ function resetForm() {
 =========================== */
 $(document).ready(function () {
     loadProjects();
+    
+    // Button tambah task -> redirect ke halaman create project
+    $("#btnAddTask").on("click", function() {
+        window.location.href = "create-project.html";
+    });
 });

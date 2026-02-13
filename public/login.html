@@ -101,6 +101,16 @@
             lucide.createIcons();
         });
     </script>
-    <script src="/js/login.js"></script>
+    <!-- <script src="/js/login.js"></script> -->
+    <script src="/js/auth.js"></script>
+    <script>
+        $(document).ready(function(){
+            handleLogin();
+
+            if (getToken()) {
+            window.location.href = "dashboard.html";
+            }
+        });
+    </script>
 </body>
 </html>

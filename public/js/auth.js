@@ -1,15 +1,35 @@
-// auth.js
+const API_URL = "http://127.0.0.1:8000/api";
 
-// jika belum login → redirect
-if (!localStorage.getItem("api_token")) {
-    window.location.href = "/login.html";
+/* ==========================
+   TOKEN MANAGEMENT
+========================== */
+
+function saveToken(token) {
+    localStorage.setItem("api_token", token);
 }
 
-// helper header auth
+function getToken() {
+    return localStorage.getItem("api_token");
+}
+
+function removeToken() {
+    localStorage.removeItem("api_token");
+}
+
 function getAuthHeader() {
-    const token = localStorage.getItem("api_token");
-    console.log("Auth Token:", token); // Debug
     return {
-        Authorization: "Bearer " + token
+        Authorization: "Bearer " + getToken()
     };
+}
+
+/* ==========================
+   AUTH CHECK (WAJIB)
+========================== */
+
+function checkAuth() {
+    const token = getToken();
+
+    if (!token) {
+        window.location.href = "login.html";
+    }
 }

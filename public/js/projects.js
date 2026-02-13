@@ -1,6 +1,28 @@
 const API_URL = "http://127.0.0.1:8000/api";
 
 /* ===========================
+   LOAD PROFILE HEADER
+=========================== */
+function loadProfileHeader() {
+    $.ajax({
+        url: `${API_URL}/profile`,
+        method: "GET",
+        headers: getAuthHeader(),
+        success: function (res) {
+            const user = res.data;
+            $("#header-name").text(user.name);
+            $("#header-avatar").text(user.name.charAt(0).toUpperCase());
+        },
+        error: function (xhr) {
+            console.error(xhr.responseText);
+            if (xhr.status === 401) {
+                logout();
+            }
+        }
+    });
+}
+
+/* ===========================
    LOAD PROJECT LIST WITH PROGRESS
 =========================== */
 function loadProjects() {
@@ -129,6 +151,13 @@ function viewTasks(projectId) {
 }
 
 /* ===========================
+   CREATE PROJECT
+=========================== */
+function createProject() {
+    window.location.href = "create-project.html";
+}
+
+/* ===========================
    EDIT PROJECT
 =========================== */
 function editProject(id) {
@@ -157,13 +186,189 @@ function deleteProject(id) {
 }
 
 /* ===========================
+   GET PROJECT ID FROM URL
+=========================== */
+function getProjectIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('project_id');
+}
+
+/* ===========================
+   LOAD PROJECT DATA (FOR EDIT PAGE)
+=========================== */
+function loadProjectData() {
+    const projectId = getProjectIdFromUrl();
+    
+    if (!projectId) {
+        alert("Project ID tidak ditemukan");
+        window.location.href = "projects.html";
+        return;
+    }
+
+    $.ajax({
+        url: `${API_URL}/users/project/${projectId}`,
+        method: "GET",
+        headers: getAuthHeader(),
+        success: function(res) {
+            console.log("Project Data:", res.data); // Debug
+            
+            const project = res.data;
+            
+            // Set hidden input dengan project ID
+            $("#edit_project_id").val(projectId);
+            
+            // Fill form dengan data project
+            $("#edit_title").val(project.title);
+            $("#edit_description").val(project.description);
+            $("#edit_status").val(project.status);
+            $("#edit_tenggat").val(project.tenggat);
+        },
+        error: function(err) {
+            console.error("Load Project Error:", err.responseJSON); // Debug
+            alert("Gagal memuat data proyek");
+            window.location.href = "projects.html";
+        }
+    });
+}
+
+/* ===========================
+   HANDLE EDIT PROJECT FORM SUBMIT
+=========================== */
+function handleEditProjectForm() {
+    $("#editProjectForm").on("submit", function(e) {
+        e.preventDefault();
+
+        const projectId = $("#edit_project_id").val();
+        const title = $("#edit_title").val();
+        const description = $("#edit_description").val();
+        const status = $("#edit_status").val();
+        const tenggat = $("#edit_tenggat").val();
+
+        console.log("Update Project Data:", { projectId, title, description, status, tenggat }); // Debug
+
+        $.ajax({
+            url: `${API_URL}/users/project/${projectId}/update`,
+            method: "PUT",
+            headers: getAuthHeader(),
+            contentType: "application/json",
+            data: JSON.stringify({
+                title: title,
+                description: description,
+                status: status,
+                tenggat: tenggat
+            }),
+            success: function(res) {
+                console.log("Update Project Success:", res); // Debug
+                alert("Proyek berhasil diperbarui ✅");
+                window.location.href = "projects.html";
+            },
+            error: function(err) {
+                console.error("Update Project Error:", err.responseJSON); // Debug
+                
+                let message = "Gagal memperbarui proyek";
+                if (err.responseJSON && err.responseJSON.message) {
+                    message = err.responseJSON.message;
+                } else if (err.responseJSON && err.responseJSON.errors) {
+                    message = Object.values(err.responseJSON.errors).join(", ");
+                }
+                
+                alert(message);
+            }
+        });
+    });
+}
+
+/* ===========================
+   HANDLE DELETE PROJECT (FROM EDIT PAGE)
+=========================== */
+function handleDeleteProjectButton() {
+    $("#btnDeleteProject").on("click", function() {
+        const projectId = $("#edit_project_id").val();
+        
+        if (!confirm("Yakin ingin menghapus proyek ini? Semua tugas akan dihapus permanen dan tidak dapat dipulihkan.")) {
+            return;
+        }
+
+        $.ajax({
+            url: `${API_URL}/users/project/${projectId}`,
+            method: "DELETE",
+            headers: getAuthHeader(),
+            success: function() {
+                console.log("Delete Project Success"); // Debug
+                alert("Proyek berhasil dihapus ✅");
+                window.location.href = "projects.html";
+            },
+            error: function(err) {
+                console.error("Delete Project Error:", err.responseJSON); // Debug
+                alert("Gagal menghapus proyek");
+            }
+        });
+    });
+}
+
+/* ===========================
    INIT
 =========================== */
 $(document).ready(function () {
-    loadProjects();
+    // Load profile header di semua halaman (projects, edit, create)
+    loadProfileHeader();
+    
+    // Jika di halaman projects.html - load project list
+    if ($("#projectList").length) {
+        loadProjects();
+    }
+    
+    // Jika di halaman EditProjects.html - load project data dan setup form
+    if ($("#editProjectForm").length) {
+        loadProjectData();
+        handleEditProjectForm();
+        handleDeleteProjectButton();
+    }
     
     // Button tambah task -> redirect ke halaman create project
     $("#btnAddTask").on("click", function() {
         window.location.href = "create-project.html";
+    });
+
+    // Handle form submit di create-project.html
+    $("#createProjectForm").on("submit", function(e) {
+        e.preventDefault();
+
+        const title = $("#title").val();
+        const description = $("#description").val();
+        const status = $("#status").val();
+        const tenggat = $("#tenggat").val();
+
+        console.log("Create Project Data:", { title, description, status, tenggat }); // Debug
+
+        $.ajax({
+            url: `${API_URL}/users/project/create`,
+            method: "POST",
+            headers: getAuthHeader(),
+            contentType: "application/json",
+            data: JSON.stringify({
+                title: title,
+                description: description,
+                status: status,
+                tenggat: tenggat
+            }),
+            success: function(res) {
+                console.log("Create Project Success:", res); // Debug
+                alert("Proyek berhasil dibuat ✅");
+                window.location.href = "projects.html";
+            },
+            error: function(err) {
+                console.error("Create Project Error:", err.responseJSON); // Debug
+                
+                let message = "Gagal membuat proyek";
+                if (err.responseJSON && err.responseJSON.message) {
+                    message = err.responseJSON.message;
+                } else if (err.responseJSON && err.responseJSON.errors) {
+                    message = Object.values(err.responseJSON.errors).join(", ");
+                }
+                
+                alert(message);
+            }
+        });
     });
 });

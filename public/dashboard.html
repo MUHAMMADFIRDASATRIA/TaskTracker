@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskTracker Dashboard</title>
+    <title>TaskTracker Dashboard - Premium</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -13,174 +13,252 @@
         .sidebar-transition { transition: all 0.3s ease; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
         .fade-in { animation: fadeIn 0.5s ease-out; }
-        .slide-in { animation: slideIn 0.5s ease-out; }
         
         .glass-dark {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            border-color: rgba(30, 41, 59, 0.5);
         }
         
         .card-dark {
             background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid rgba(51, 65, 85, 0.5);
         }
         
+        .glow-cyan {
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
+        }
+
         .stat-card {
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .stat-card:hover {
             transform: translateY(-4px);
+            border-color: rgba(34, 211, 238, 0.3);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(34, 211, 238, 0.1);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
         }
     </style>
 </head>
 
-<body class="bg-slate-900 text-slate-100 overflow-hidden">
+<body class="bg-slate-950 text-slate-100 overflow-hidden">
 
 <div class="flex h-screen overflow-hidden">
 
     <!-- Background decoration -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px]"></div>
     </div>
 
     <!-- SIDEBAR -->
-    <aside id="sidebar" class="w-56 glass-dark border-r border-slate-700/50 flex flex-col z-20 shrink-0 relative">
+    <aside id="sidebar" class="w-56 glass-dark border-r border-slate-800/50 flex flex-col z-20 shrink-0 relative">
         <div class="p-6 flex items-center gap-3">
-            <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg shadow-cyan-500/50">
+            <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg shadow-cyan-500/20">
                 <i data-lucide="check-circle" stroke-width="2.5" size="18"></i>
             </div>
             <span class="sidebar-text font-bold text-xl tracking-tight bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">TaskTracker</span>
         </div>
 
         <nav class="flex-1 px-4 space-y-1.5 mt-4">
-            <a href="dashboard.html" class="flex items-center gap-3 p-3 rounded-lg transition-all bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold shadow-lg shadow-cyan-500/30">
+            <a href="dashboard.html" class="flex items-center gap-3 p-3 rounded-xl transition-all bg-cyan-600/10 text-cyan-400 border border-cyan-500/20 font-semibold shadow-lg shadow-cyan-500/5">
                 <i data-lucide="layout-dashboard" size="18"></i>
-                <span class="sidebar-text font-medium text-sm">Dashboard</span>
+                <span class="sidebar-text text-sm">Dashboard</span>
             </a>
-            <a href="projects.html" class="flex items-center gap-3 p-3 rounded-lg transition-all text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400">
-                <i data-lucide="folder" size="18"></i>
-                <span class="sidebar-text text-sm">Proyek Saya</span>
+            <a href="projects.html" class="flex items-center gap-3 p-3 rounded-xl transition-all text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400 group">
+                <i data-lucide="folder" size="18" class="group-hover:scale-110 transition-transform"></i>
+                <span class="sidebar-text text-sm font-medium">Proyek Saya</span>
             </a>
-            <a href="profile.html" class="flex items-center gap-3 p-3 rounded-lg transition-all text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400">
-                <i data-lucide="user" size="18"></i>
-                <span class="sidebar-text text-sm">Profil</span>
+            <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl transition-all text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400 group">
+                <i data-lucide="user" size="18" class="group-hover:scale-110 transition-transform"></i>
+                <span class="sidebar-text text-sm font-medium">Profil</span>
             </a>
         </nav>
-        
-        <!-- Decorative glow -->
-        <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-cyan-500/10 to-transparent pointer-events-none"></div>
     </aside>
 
     <!-- MAIN -->
     <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10">
 
         <!-- HEADER -->
-        <header class="h-20 glass-dark border-b border-slate-700/50 flex items-center justify-between px-8 shrink-0">
+        <header class="h-20 glass-dark border-b border-slate-800/50 flex items-center justify-between px-8 shrink-0">
 
             <div class="flex items-center gap-4">
-                <div class="relative hidden md:block">
-                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size="18"></i>
-                    <input
-                        type="text"
-                        placeholder="Cari tugas..."
-                        class="pl-10 pr-4 py-2.5 bg-slate-800/50 border border-slate-700/50 rounded-xl text-sm w-64 focus:ring-2 focus:ring-cyan-500/50 outline-none text-slate-200 placeholder-slate-500 transition-all">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-2">
+                        Halo, <span id="welcome-name" class="text-cyan-400">User</span> 👋
+                    </h1>
+                    <p class="text-xs text-slate-500 mt-0.5">Berikut progres tugas dan produktivitas Anda hari ini</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                <button class="p-2 text-slate-400 hover:bg-slate-800/50 rounded-lg relative transition-colors">
+                <button class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-800/50 rounded-xl relative transition-colors border border-transparent hover:border-slate-700/50">
                     <i data-lucide="bell" size="20"></i>
-                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-slate-800 animate-pulse"></span>
+                    <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-slate-950"></span>
                 </button>
 
-                <div class="h-8 w-px bg-slate-700/50 mx-2"></div>
+                <div class="h-8 w-px bg-slate-800 mx-2"></div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 pl-2">
                     <div class="text-right hidden sm:block">
-                        <p id="header-name" class="text-sm font-semibold text-slate-200">Memuat...</p>
-                        <p class="text-xs text-slate-500">Pengguna</p>
+                        <p id="header-name" class="text-sm font-bold text-slate-200">Alex Johnson</p>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Premium User</p>
                     </div>
                     <div id="header-avatar"
-                     class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white
-                            flex items-center justify-center font-bold shadow-lg shadow-cyan-500/50">
-                        U
+                         class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white
+                                flex items-center justify-center font-bold shadow-lg shadow-cyan-500/20 ring-2 ring-slate-800">
+                        A
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- CONTENT -->
-        <div class="flex-1 overflow-y-auto p-6 lg:p-8 space-y-6 custom-scrollbar">
-
-            <!-- Welcome Section -->
-            <div class="fade-in">
-                <h1 class="text-3xl font-bold text-slate-100 mb-2">Halo, Kamu 👋</h1>
-                <p class="text-slate-400">Ini ringkasan tugas Anda untuk hari ini.</p>
-            </div>
+        <div class="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
 
             <!-- Stats Grid -->
-            <div id="stats-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 fade-in" style="animation-delay: 0.1s;">
-                <!-- Stats akan di-render oleh JavaScript -->
-                <div class="col-span-full flex justify-center py-8">
-                    <div class="inline-flex items-center gap-2 text-slate-500">
-                        <i data-lucide="loader" size="20" class="animate-spin"></i>
-                        <span class="text-sm">Memuat statistik...</span>
+            <div id="stats-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 fade-in" style="animation-delay: 0.1s;">
+                <!-- Contoh Stat Card Premium -->
+                <div class="stat-card card-dark p-6 rounded-[2rem] flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 bg-cyan-500/10 rounded-2xl flex items-center justify-center text-cyan-400 border border-cyan-500/20">
+                            <i data-lucide="briefcase" size="24"></i>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-400">+12%</span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Total Proyek</p>
+                        <h3 class="text-3xl font-black text-white">24</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card card-dark p-6 rounded-[2rem] flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400 border border-blue-500/20">
+                            <i data-lucide="list-todo" size="24"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-500">8 Tertunda</span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Tugas Aktif</p>
+                        <h3 class="text-3xl font-black text-white">142</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card card-dark p-6 rounded-[2rem] flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                            <i data-lucide="check-circle-2" size="24"></i>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-400">85% Rate</span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Selesai</p>
+                        <h3 class="text-3xl font-black text-white">128</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card card-dark p-6 rounded-[2rem] flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-400 border border-rose-500/20">
+                            <i data-lucide="clock" size="24"></i>
+                        </div>
+                        <span class="text-xs font-bold text-rose-400">Urgent</span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Tenggat Dekat</p>
+                        <h3 class="text-3xl font-black text-white">3</h3>
                     </div>
                 </div>
             </div>
 
             <!-- Recent Tasks Table -->
-            <div class="card-dark rounded-2xl border border-slate-700/50 overflow-hidden shadow-2xl fade-in" style="animation-delay: 0.2s;">
-                <div class="px-6 py-4 border-b border-slate-700/50 bg-slate-800/30">
+            <div class="card-dark rounded-[2.5rem] border border-slate-800/50 overflow-hidden shadow-2xl fade-in" style="animation-delay: 0.2s;">
+                <div class="px-8 py-6 border-b border-slate-800/50 bg-slate-900/30">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-cyan-600/20 rounded-lg">
-                                <i data-lucide="list-checks" size="20" class="text-cyan-400"></i>
+                        <div class="flex items-center gap-4">
+                            <div class="p-3 bg-cyan-500/10 rounded-2xl border border-cyan-500/20">
+                                <i data-lucide="list-checks" size="22" class="text-cyan-400"></i>
                             </div>
                             <div>
-                                <h3 class="font-bold text-slate-200 text-base">Tugas Terbaru</h3>
-                                <p class="text-xs text-slate-500">Daftar tugas yang perlu perhatian</p>
+                                <h3 class="font-bold text-slate-100 text-lg">Tugas Terbaru</h3>
+                                <p class="text-xs text-slate-500 font-medium">Pantau aktivitas pekerjaan paling baru</p>
                             </div>
                         </div>
+                        <button class="text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-widest px-4 py-2 rounded-xl bg-cyan-500/5 border border-cyan-500/10">Lihat Semua</button>
                     </div>
                 </div>
                 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
-                        <thead class="bg-slate-800/50 text-xs uppercase text-slate-400 font-semibold border-b border-slate-700/50">
+                        <thead class="bg-slate-900/50 text-[10px] uppercase text-slate-500 font-bold tracking-[0.2em] border-b border-slate-800/50">
                             <tr>
-                                <th class="px-6 py-4">Tugas</th>
-                                <th class="px-6 py-4">Prioritas</th>
-                                <th class="px-6 py-4">Status</th>
-                                <th class="px-6 py-4">Tenggat</th>
-                                <th class="px-6 py-4 text-center">Aksi</th>
+                                <th class="px-8 py-5">Detail Tugas</th>
+                                <th class="px-8 py-5">Prioritas</th>
+                                <th class="px-8 py-5">Status</th>
+                                <th class="px-8 py-5">Tenggat</th>
+                                <th class="px-8 py-5 text-center">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="task-table-body" class="divide-y divide-slate-700/50">
-                            <!-- Tasks akan di-render oleh JavaScript -->
-                            <tr>
-                                <td colspan="5" class="px-6 py-12 text-center">
-                                    <div class="flex flex-col items-center gap-3">
-                                        <div class="w-12 h-12 bg-slate-800/50 rounded-full flex items-center justify-center">
-                                            <i data-lucide="loader" size="24" class="text-slate-600 animate-spin"></i>
-                                        </div>
-                                        <p class="text-slate-500 text-sm">Memuat daftar tugas...</p>
+                        <tbody id="task-table-body" class="divide-y divide-slate-800/50">
+                            <!-- Contoh Baris Tugas Premium -->
+                            <tr class="hover:bg-slate-800/20 transition-colors group">
+                                <td class="px-8 py-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-200 group-hover:text-cyan-400 transition-colors">Integrasi Payment Gateway</span>
+                                        <span class="text-[10px] text-slate-500 font-medium uppercase mt-1">Proyek: E-Commerce App</span>
                                     </div>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">Tinggi</span>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                                        <span class="text-xs font-bold text-slate-400">Dikerjakan</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <span class="text-xs font-bold text-slate-300">Besok, 14:00</span>
+                                </td>
+                                <td class="px-8 py-5 text-center">
+                                    <button class="p-2 text-slate-500 hover:text-white transition-colors"><i data-lucide="more-horizontal" size="18"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/20 transition-colors group">
+                                <td class="px-8 py-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-200 group-hover:text-cyan-400 transition-colors">Fixing Bug UI Dashboard</span>
+                                        <span class="text-[10px] text-slate-500 font-medium uppercase mt-1">Proyek: TaskTracker</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">Sedang</span>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                                        <span class="text-xs font-bold text-slate-400">Selesai</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <span class="text-xs font-bold text-slate-500">20 Feb, 2024</span>
+                                </td>
+                                <td class="px-8 py-5 text-center">
+                                    <button class="p-2 text-slate-500 hover:text-white transition-colors"><i data-lucide="more-horizontal" size="18"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -190,9 +268,8 @@
         </div>
     </main>
 </div>
-
-<script src="/js/auth.js"></script>
-<script src="/js/dashboard.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
 <script>
     $(document).ready(function(){
         lucide.createIcons();

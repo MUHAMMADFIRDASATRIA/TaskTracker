@@ -82,7 +82,20 @@ $(document).ready(function () {
             success: function (res) {
                 const user = res.data;
                 $("#header-name").text(user.name);
-                $("#header-avatar").text(user.name.charAt(0).toUpperCase());
+                
+                // Jika ada foto profile, tampilkan foto
+                if (user.profile_photo && user.profile_photo.trim() !== "") {
+                    $("#header-avatar")
+                        .css({
+                            "background-image": `url('${user.profile_photo}')`,
+                            "background-size": "cover",
+                            "background-position": "center"
+                        })
+                        .text("");
+                } else {
+                    // Jika tidak ada foto, tampilkan inisial
+                    $("#header-avatar").text(user.name.charAt(0).toUpperCase());
+                }
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
@@ -113,16 +126,24 @@ $(document).ready(function () {
 
                 if (tasks.length === 0) {
                     container.html(`
-                        <div class="p-6 text-sm text-slate-400 text-center">
-                            Belum ada task
+                        <div class="p-8 text-center">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-slate-800/50 rounded-full mb-4 border border-slate-700/50">
+                                <i data-lucide="inbox" size="24" class="text-slate-500"></i>
+                            </div>
+                            <p class="text-slate-400 text-sm font-medium mb-1">Belum ada tugas</p>
+                            <p class="text-slate-500 text-xs">Tambahkan tugas pertama Anda untuk memulai</p>
                         </div>
                     `);
+                    lucide.createIcons();
                     return;
                 }
 
                 tasks.forEach(task => {
                     container.append(renderTask(task));
                 });
+
+                // Reinitialize Lucide icons for dynamically added content
+                lucide.createIcons();
 
                 totalTasks = tasks.length;
                 completedTasks = tasks.filter(t => t.finish).length;
@@ -237,33 +258,87 @@ $(document).ready(function () {
 
 
     /* ======================
-       RENDER TASK
+       RENDER TASK - UPDATED
     ====================== */
     function renderTask(task) {
+        const isCompleted = task.finish;
+        
+        // Priority Styling logic
+        const priority = (task.priority || "Sedang").toLowerCase();
+        const pStyles = {
+            'tinggi': 'bg-rose-500/20 text-rose-300 border border-rose-500/30',
+            'sedang': 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
+            'rendah': 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+        };
+        const pClass = pStyles[priority] || pStyles['sedang'];
+        
+        // Format status badge styling
+        const statusText = isCompleted ? 'Selesai' : 'Sedang Berjalan';
+        const statusClass = isCompleted 
+            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
+            : 'bg-blue-500/20 text-blue-300 border border-blue-500/30';
+
+        // Format date
+        const dateStr = task.tenggat || '-';
+
         return `
-        <div class="p-4 flex items-start gap-4">
-            <div class="pt-1">
-                <input type="checkbox" class="task-finish h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" data-id="${task.id}" ${task.finish ? "checked" : ""}>
-            </div>
-            <div class="flex-1 min-w-0">
-                <p class="font-semibold text-slate-800">${task.title}</p>
-                <p class="text-sm text-slate-500">
-                    ${task.description ? task.description : "-"}
-                </p>
-                <p class="text-xs text-slate-400 mt-1">
-                    ${task.finish ? "Selesai" : "Belum selesai"}
-                </p>
-            </div>
-            <div class="flex gap-2">
-                <button class="btn-edit text-indigo-600 text-sm" data-id="${task.id}">
-                    Edit
-                </button>
-                <button class="btn-delete text-rose-600 text-sm" data-id="${task.id}">
-                    Hapus
-                </button>
+        <div class="task-item group relative bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 transition-all hover:border-slate-600/50 hover:bg-slate-800/60">
+            <div class="flex items-start gap-4">
+                <!-- Checkbox -->
+                <div class="shrink-0 mt-1">
+                    <input type="checkbox" class="task-finish w-5 h-5 rounded border-2 border-slate-600 bg-slate-700/50 checked:bg-cyan-500 checked:border-cyan-500 cursor-pointer transition-all" data-id="${task.id}" ${isCompleted ? "checked" : ""}>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                    <!-- Title -->
+                    <h4 class="font-semibold text-base text-slate-200 mb-1 ${isCompleted ? 'line-through opacity-60' : ''}">
+                        ${task.title}
+                    </h4>
+
+                    <!-- Description -->
+                    ${task.description ? `
+                        <p class="text-sm text-slate-400 mb-3 leading-relaxed ${isCompleted ? 'line-through opacity-50' : ''}">
+                            ${task.description}
+                        </p>
+                    ` : ''}
+
+                    <!-- Meta Info Row -->
+                    <div class="flex items-center gap-3 text-xs">
+                        <div class="flex items-center gap-1.5 text-slate-500">
+                            <i data-lucide="calendar" size="14"></i>
+                            <span>${dateStr}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="check-circle" size="14" class="${isCompleted ? 'text-emerald-400' : 'text-blue-400'}"></i>
+                            <span class="px-2 py-0.5 rounded ${statusClass} text-xs font-medium">
+                                ${statusText}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Priority Badge & Actions -->
+                <div class="shrink-0 flex items-start gap-2">
+                    <!-- Priority Badge -->
+                    <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide ${pClass}">
+                        ${priority}
+                    </span>
+
+                    <!-- Actions (show on hover) -->
+                    <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="btn-edit p-1 rounded-md text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all" data-id="${task.id}">
+                            <i data-lucide="edit-3" size="13"></i>
+                        </button>
+                        <button class="btn-delete p-1 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all" data-id="${task.id}">
+                            <i data-lucide="trash-2" size="13"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>`;
     }
+
 
 
     /* ======================

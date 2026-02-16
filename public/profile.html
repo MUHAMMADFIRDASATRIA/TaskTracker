@@ -13,8 +13,8 @@
         .sidebar-transition { transition: all 0.3s ease; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -24,12 +24,14 @@
         .fade-in { animation: fadeIn 0.5s ease-out; }
         
         .glass-dark {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            border-color: rgba(30, 41, 59, 0.5);
         }
         
         .card-dark {
             background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid rgba(51, 65, 85, 0.5);
         }
         
         #profile-photo-preview {
@@ -49,50 +51,47 @@
     </style>
 </head>
 
-<body class="bg-slate-900 text-slate-100 overflow-hidden">
+<body class="bg-slate-950 text-slate-100 overflow-hidden">
 
 <div class="flex h-screen overflow-hidden">
 
     <!-- Background decoration -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px]"></div>
     </div>
 
     <!-- SIDEBAR -->
-    <aside id="sidebar" class="w-56 glass-dark border-r border-slate-700/50 flex flex-col z-20 shrink-0 relative">
+    <aside id="sidebar" class="w-56 glass-dark border-r border-slate-800/50 flex flex-col z-20 shrink-0 relative">
         <div class="p-6 flex items-center gap-3">
-            <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg shadow-cyan-500/50">
+            <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg shadow-cyan-500/20">
                 <i data-lucide="check-circle" stroke-width="2.5" size="18"></i>
             </div>
             <span class="sidebar-text font-bold text-xl tracking-tight bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">TaskTracker</span>
         </div>
 
         <nav class="flex-1 px-4 space-y-1.5 mt-4">
-            <a href="dashboard.html" class="flex items-center gap-3 p-3 rounded-lg transition-all text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400">
-                <i data-lucide="layout-dashboard" size="18"></i>
-                <span class="sidebar-text text-sm">Dashboard</span>
+            <a href="dashboard.html" class="flex items-center gap-3 p-3 rounded-xl transition-all text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400 group">
+                <i data-lucide="layout-dashboard" size="18" class="group-hover:scale-110 transition-transform"></i>
+                <span class="sidebar-text text-sm font-medium">Dashboard</span>
             </a>
-            <a href="projects.html" class="flex items-center gap-3 p-3 rounded-lg transition-all text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400">
-                <i data-lucide="folder" size="18"></i>
-                <span class="sidebar-text text-sm">Proyek Saya</span>
+            <a href="projects.html" class="flex items-center gap-3 p-3 rounded-xl transition-all text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400 group">
+                <i data-lucide="folder" size="18" class="group-hover:scale-110 transition-transform"></i>
+                <span class="sidebar-text text-sm font-medium">Proyek Saya</span>
             </a>
-            <a href="profile.html" class="flex items-center gap-3 p-3 rounded-lg transition-all bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold shadow-lg shadow-cyan-500/30">
+            <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl transition-all bg-cyan-600/10 text-cyan-400 border border-cyan-500/20 font-semibold shadow-lg shadow-cyan-500/5">
                 <i data-lucide="user" size="18"></i>
-                <span class="sidebar-text font-medium text-sm">Profil</span>
+                <span class="sidebar-text text-sm">Profil</span>
             </a>
         </nav>
 
         <!-- Sidebar Footer: Logout -->
-        <div class="p-4 border-t border-slate-700/50">
-            <button id="btnLogout" class="w-full flex items-center gap-3 p-3 rounded-lg transition-all text-rose-400 hover:bg-rose-500/10 font-semibold group text-sm">
+        <div class="p-4 mt-auto border-t border-slate-800/50">
+            <button id="btnLogout" class="w-full flex items-center gap-3 p-3 rounded-xl transition-all text-rose-400 hover:bg-rose-500/10 font-semibold group text-sm">
                 <i data-lucide="log-out" size="18" class="group-hover:translate-x-1 transition-transform"></i>
                 <span class="sidebar-text">Keluar</span>
             </button>
         </div>
-        
-        <!-- Decorative glow -->
-        <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-cyan-500/10 to-transparent pointer-events-none"></div>
     </aside>
 
     <!-- MAIN -->

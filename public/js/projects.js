@@ -1,4 +1,9 @@
 /* ===========================
+   GLOBAL VARIABLES
+=========================== */
+let allProjects = []; // Store all projects for search filtering
+
+/* ===========================
    LOAD PROFILE HEADER
 =========================== */
 function loadProfileHeader() {
@@ -9,7 +14,20 @@ function loadProfileHeader() {
         success: function (res) {
             const user = res.data;
             $("#header-name").text(user.name);
-            $("#header-avatar").text(user.name.charAt(0).toUpperCase());
+            
+            // Jika ada foto profile, tampilkan foto
+            if (user.profile_photo && user.profile_photo.trim() !== "") {
+                $("#header-avatar")
+                    .css({
+                        "background-image": `url('${user.profile_photo}')`,
+                        "background-size": "cover",
+                        "background-position": "center"
+                    })
+                    .text("");
+            } else {
+                // Jika tidak ada foto, tampilkan inisial
+                $("#header-avatar").text(user.name.charAt(0).toUpperCase());
+            }
         },
         error: function (xhr) {
             console.error(xhr.responseText);
@@ -29,18 +47,17 @@ function loadProjects() {
         method: "GET",
         headers: getAuthHeader(),
         success: function (res) {
+            const projects = res.data ?? [];
+            allProjects = projects; // Store globally for search
             $("#projectList").empty();
+            $("#project-count").text(`${projects.length} Total Proyek Ditemukan`);
 
-            if (res.data.length === 0) {
+            if (projects.length === 0) {
                 $("#projectList").html(`
-                    <div class="text-center text-slate-400 py-12">
-                        <div class="flex flex-col items-center">
-                            <div class="w-20 h-20 bg-slate-800/50 rounded-2xl flex items-center justify-center mb-4 border border-slate-700/50">
-                                <i data-lucide="inbox" size="40" class="text-slate-600"></i>
-                            </div>
-                            <p class="text-lg font-semibold text-slate-300 mb-2">Belum ada proyek</p>
-                            <p class="text-sm text-slate-500">Mulai dengan membuat proyek baru</p>
-                        </div>
+                    <div class="py-24 text-center">
+                        <i data-lucide="folder-x" size="48" class="text-slate-700 mx-auto mb-4"></i>
+                        <h3 class="text-lg font-bold text-slate-400">Belum ada proyek operasional</h3>
+                        <p class="text-sm text-slate-600">Klik "Proyek Baru" untuk memulai workspace Anda.</p>
                     </div>
                 `);
                 lucide.createIcons();
@@ -48,13 +65,14 @@ function loadProjects() {
             }
 
             // Load progress untuk setiap project
-            res.data.forEach(project => {
+            projects.forEach(project => {
                 loadTasksForProgress(project);
             });
             
             lucide.createIcons();
         },
         error: function (xhr) {
+            $("#projectList").html('<div class="py-20 text-center text-rose-500">Gagal memuat data proyek.</div>');
             if (xhr.status === 401) logout();
         }
     });
@@ -94,119 +112,121 @@ function loadTasksForProgress(project) {
 }
 
 /* ===========================
-   PROJECT CARD TEMPLATE - HORIZONTAL LIST LAYOUT
+   PROJECT ROW TEMPLATE
 =========================== */
 function projectCard(p) {
     const progress = p.progress || 0;
-    const tasksInfo = p.tasksInfo || { total: 0, completed: 0 };
+    const tasks = p.tasksInfo || { total: 0, completed: 0 };
     
-    // Status color mapping
-    const statusColors = {
-        'pending': { bg: 'from-slate-600 to-slate-700', text: 'text-slate-300', dot: 'bg-slate-500' },
-        'in progress': { bg: 'from-cyan-600 to-blue-600', text: 'text-cyan-300', dot: 'bg-cyan-500' },
-        'completed': { bg: 'from-emerald-600 to-teal-600', text: 'text-emerald-300', dot: 'bg-emerald-500' },
-        'on hold': { bg: 'from-amber-600 to-orange-600', text: 'text-amber-300', dot: 'bg-amber-500' }
+    // Status Badges
+    const statusMap = {
+        'pending': 'bg-slate-500/10 text-slate-500',
+        'in progress': 'bg-cyan-500/10 text-cyan-500',
+        'completed': 'bg-emerald-500/10 text-emerald-500',
+        'on hold': 'bg-amber-500/10 text-amber-500'
     };
-    
-    const statusInfo = statusColors[p.status?.toLowerCase()] || statusColors['pending'];
-    
-    // Progress color based on percentage
-    let progressColor = 'from-rose-500 to-pink-600';
-    if (progress >= 75) progressColor = 'from-emerald-500 to-teal-600';
-    else if (progress >= 50) progressColor = 'from-cyan-500 to-blue-600';
-    else if (progress >= 25) progressColor = 'from-amber-500 to-orange-600';
-    
+    const sClass = statusMap[p.status?.toLowerCase()] || statusMap['pending'];
+
     return `
-    <div class="card-dark rounded-xl border border-slate-700/50 shadow-lg overflow-hidden card-hover fade-in relative group">
-        <!-- Glow effect on hover -->
-        <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/5 group-hover:to-blue-500/5 transition-all duration-300 pointer-events-none"></div>
-        
-        <!-- Card Content - Horizontal Layout -->
-        <div class="relative z-10 p-4 flex items-center gap-4">
-            
-            <!-- Left: Icon & Status Indicator -->
-            <div class="flex items-center gap-3 flex-shrink-0">
-                <div class="w-12 h-12 bg-gradient-to-br ${statusInfo.bg} rounded-lg flex items-center justify-center text-white shadow-lg">
-                    <i data-lucide="folder" size="20"></i>
-                </div>
+    <div class="project-row grid grid-cols-[1.5fr_1fr_1fr_0.5fr] gap-4 px-8 py-5 bg-transparent border-b border-slate-800/20 items-center fade-in hover:bg-slate-900/30 transition-all group">
+        <!-- Identitas -->
+        <div class="flex items-center gap-4 min-w-0">
+            <div class="w-10 h-10 shrink-0 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-center text-slate-500">
+                <i data-lucide="folder" size="18"></i>
             </div>
-
-            <!-- Center: Project Info -->
-            <div class="flex-1 min-w-0 space-y-2">
-                <!-- Title & Status & Deadline -->
-                <div class="flex items-center gap-2 flex-wrap">
-                    <h3 class="text-base font-bold text-slate-100">${p.title}</h3>
-                    <div class="flex items-center gap-2">
-                        <div class="w-1 h-1 rounded-full ${statusInfo.dot}"></div>
-                        <span class="text-xs font-semibold ${statusInfo.text} capitalize">
-                            ${p.status || 'pending'}
-                        </span>
-                    </div>
-                    ${p.tenggat ? `
-                    <div class="flex items-center gap-1.5 text-slate-500 ml-auto">
-                        <i data-lucide="calendar" size="12"></i>
-                        <span class="text-xs font-medium">${p.tenggat}</span>
-                    </div>
-                    ` : ''}
+            <div class="min-w-0">
+                <h3 class="text-sm font-bold text-slate-200 truncate mb-1">${p.title}</h3>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${sClass} border border-current opacity-70">
+                        ${p.status || 'Pending'}
+                    </span>
+                    <span class="text-[10px] text-slate-600 font-medium truncate">${p.description || 'Tidak ada deskripsi proyek'}</span>
                 </div>
-                
-                <!-- Description -->
-                <p class="text-sm text-slate-400 line-clamp-1">${p.description || 'Tidak ada deskripsi'}</p>
-            </div>
-
-            <!-- Center-Right: Progress Info -->
-            <div class="hidden lg:flex items-center gap-4 flex-shrink-0 px-4 border-l border-slate-700/50">
-                <!-- Circular Progress -->
-                <div class="relative w-14 h-14">
-                    <svg class="w-full h-full transform -rotate-90">
-                        <circle cx="28" cy="28" r="24" stroke="currentColor" stroke-width="3" fill="transparent" class="text-slate-700" />
-                        <circle cx="28" cy="28" r="24" stroke="url(#grad-${p.id})" stroke-width="3" fill="transparent" 
-                            stroke-dasharray="150.8" stroke-dashoffset="${150.8 - (150.8 * progress / 100)}" stroke-linecap="round" class="transition-all duration-500" />
-                        <defs>
-                            <linearGradient id="grad-${p.id}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#22d3ee;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="text-xs font-bold ${statusInfo.text}">${progress}%</span>
-                    </div>
-                </div>
-                
-                <!-- Task Stats -->
-                <div class="text-right">
-                    <p class="text-xs text-slate-500 mb-0.5">Progress</p>
-                    <p class="text-sm font-bold text-slate-300">${tasksInfo.completed}<span class="text-slate-500 font-normal">/${tasksInfo.total}</span></p>
-                </div>
-            </div>
-            
-            <!-- Right: Minimalist Action Menu -->
-            <div class="flex items-center gap-1 flex-shrink-0 ml-2">
-                <button onclick="viewTasks(${p.id})" class="w-7 h-7 text-slate-400 hover:text-cyan-400 hover:bg-slate-800/50 rounded transition-all flex items-center justify-center" title="Lihat Detail">
-                    <i data-lucide="eye" size="14"></i>
-                </button>
-                <button onclick="editProject(${p.id})" class="w-7 h-7 text-slate-400 hover:text-cyan-400 hover:bg-slate-800/50 rounded transition-all flex items-center justify-center" title="Edit Proyek">
-                    <i data-lucide="pencil" size="14"></i>
-                </button>
-                <button onclick="deleteProject(${p.id})" class="w-7 h-7 text-slate-400 hover:text-rose-400 hover:bg-slate-800/50 rounded transition-all flex items-center justify-center" title="Hapus Proyek">
-                    <i data-lucide="trash-2" size="14"></i>
-                </button>
             </div>
         </div>
-        
-        <!-- Bottom: Progress Bar (Mobile & Tablet) -->
-        <div class="lg:hidden px-4 pb-3">
-            <div class="flex items-center justify-between mb-1.5">
-                <span class="text-xs text-slate-500 font-medium">Progress</span>
-                <span class="text-xs font-semibold ${statusInfo.text}">${progress}% · ${tasksInfo.completed}/${tasksInfo.total}</span>
+
+        <!-- Progres -->
+        <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider">
+                <span class="text-slate-500">${tasks.completed}/${tasks.total} Tugas</span>
+                <span class="text-cyan-400">${progress}%</span>
             </div>
-            <div class="w-full bg-slate-700/50 rounded-full h-1.5 overflow-hidden">
-                <div class="bg-gradient-to-r ${progressColor} h-full transition-all duration-500" style="width: ${Math.min(progress, 100)}%"></div>
+            <div class="w-full bg-slate-900 rounded-full h-1.5 border border-slate-800 overflow-hidden">
+                <div class="bg-gradient-to-r from-cyan-600 to-blue-500 h-full transition-all duration-500" style="width: ${progress}%; box-shadow: 0 0 10px rgba(34, 211, 238, 0.3);"></div>
             </div>
+        </div>
+
+        <!-- Deadline -->
+        <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2 text-slate-300">
+                <i data-lucide="calendar" size="14" class="text-slate-600"></i>
+                <span class="text-xs font-bold">${p.tenggat || 'N/A'}</span>
+            </div>
+            <span class="text-[10px] text-slate-600 font-medium uppercase tracking-widest ml-5">Tenggat Akhir</span>
+        </div>
+
+        <!-- Kontrol -->
+        <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onclick="viewTasks(${p.id})" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all" title="Buka Proyek">
+                <i data-lucide="external-link" size="16"></i>
+            </button>
+            <button onclick="editProject(${p.id})" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-800 transition-all" title="Edit">
+                <i data-lucide="settings" size="16"></i>
+            </button>
         </div>
     </div>
     `;
+}
+
+/* ===========================
+   SEARCH PROJECTS
+=========================== */
+function searchProjects(keyword) {
+    const searchTerm = keyword.toLowerCase().trim();
+    
+    if (!searchTerm) {
+        // If search is empty, reload all projects
+        $("#projectList").empty();
+        allProjects.forEach(project => {
+            loadTasksForProgress(project);
+        });
+        $("#project-count").text(`${allProjects.length} Total Proyek Ditemukan`);
+        return;
+    }
+    
+    // Filter projects by title or description
+    const filtered = allProjects.filter(project => {
+        const title = (project.title || '').toLowerCase();
+        const description = (project.description || '').toLowerCase();
+        const status = (project.status || '').toLowerCase();
+        
+        return title.includes(searchTerm) || 
+               description.includes(searchTerm) || 
+               status.includes(searchTerm);
+    });
+    
+    // Update project count
+    $("#project-count").text(`${filtered.length} Proyek Ditemukan`);
+    
+    // Clear and render filtered results
+    $("#projectList").empty();
+    
+    if (filtered.length === 0) {
+        $("#projectList").html(`
+            <div class="py-24 text-center">
+                <i data-lucide="search-x" size="48" class="text-slate-700 mx-auto mb-4"></i>
+                <h3 class="text-lg font-bold text-slate-400">Tidak ada proyek yang cocok</h3>
+                <p class="text-sm text-slate-600">Coba kata kunci lain atau kosongkan pencarian.</p>
+            </div>
+        `);
+        lucide.createIcons();
+        return;
+    }
+    
+    // Render filtered projects
+    filtered.forEach(project => {
+        loadTasksForProgress(project);
+    });
 }
 
 /* ===========================
@@ -423,6 +443,12 @@ $(document).ready(function () {
     
     $("#btnAddTask").on("click", function() {
         window.location.href = "create-project.html";
+    });
+
+    // Search functionality
+    $("#searchProject").on("input", function() {
+        const keyword = $(this).val();
+        searchProjects(keyword);
     });
 
     $("#createProjectForm").on("submit", function(e) {

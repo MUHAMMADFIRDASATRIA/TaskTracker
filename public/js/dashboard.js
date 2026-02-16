@@ -9,7 +9,21 @@ function loadProfileHeader() {
         success: function (res) {
             const user = res.data;
             $("#header-name").text(user.name);
-            $("#header-avatar").text(user.name.charAt(0).toUpperCase());
+            $("#welcome-name").text(user.name);
+            
+            // Jika ada foto profile, tampilkan foto
+            if (user.profile_photo && user.profile_photo.trim() !== "") {
+                $("#header-avatar")
+                    .css({
+                        "background-image": `url('${user.profile_photo}')`,
+                        "background-size": "cover",
+                        "background-position": "center"
+                    })
+                    .text("");
+            } else {
+                // Jika tidak ada foto, tampilkan inisial
+                $("#header-avatar").text(user.name.charAt(0).toUpperCase());
+            }
         },
         error: function (xhr) {
             console.error(xhr.responseText);

@@ -58,6 +58,9 @@ class TaskController extends Controller
             'finish' => $finish
         ]);
 
+        // Auto-update project status
+        $this->updateProjectStatus($projectId);
+
         return response()->json([
             'success'=>true,
             'data'=>$task
@@ -101,12 +104,27 @@ class TaskController extends Controller
             $data['description'] = $request->input('description');
         }
 
-        if ($request->filled('finish'))
+        // Use has() instead of filled() for boolean fields
+        // because filled() returns false when value is false
+        if ($request->has('finish'))
         {
-            $data['finish'] = $request->input('finish');
+            $data['finish'] = filter_var($request->input('finish'), FILTER_VALIDATE_BOOLEAN);
+        }
+
+        if ($request->filled('priority'))
+        {
+            $data['priority'] = $request->input('priority');
+        }
+
+        if ($request->filled('tenggat'))
+        {
+            $data['tenggat'] = $request->input('tenggat');
         }
 
         $task->update($data);
+
+        // Auto-update project status
+        $this->updateProjectStatus($projectId);
 
         return response()->json([
             'success'=>true,
@@ -141,9 +159,45 @@ class TaskController extends Controller
 
         $task->delete();
 
+        // Auto-update project status
+        $this->updateProjectStatus($projectId);
+
         return response()->json([
             'success' => true,
             'message' => 'berhasil menghapus task'
         ]);
+    }
+
+    /**
+     * Update project status based on tasks
+     * - pending: no tasks
+     * - in progress: has tasks but not all completed
+     * - completed: all tasks completed
+     */
+    private function updateProjectStatus($projectId)
+    {
+        $project = project::find($projectId);
+        
+        if (!$project) {
+            return;
+        }
+        
+        $totalTasks = task::where('project_id', $projectId)->count();
+        
+        if ($totalTasks === 0) {
+            $project->status = 'pending';
+        } else {
+            $completedTasks = task::where('project_id', $projectId)
+                                   ->where('finish', true)
+                                   ->count();
+            
+            if ($completedTasks === $totalTasks) {
+                $project->status = 'completed';
+            } else {
+                $project->status = 'in progress';
+            }
+        }
+        
+        $project->save();
     }
 }

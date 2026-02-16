@@ -61,14 +61,13 @@ class ProjectController extends Controller
 
         $title = $request->input('title');
         $description = $request->input('description');
-        $status = $request->input('status');
         $tenggat = $request->input('tenggat');
 
         $project = project::create([
             'user_id' => $user->id,
             'title' => $title,
             'description' => $description,
-            'status' => $status,
+            'status' => 'pending', // Default status
             'tenggat' => $tenggat
         ]);
 
@@ -104,15 +103,13 @@ class ProjectController extends Controller
             $data['description'] = $request->input('description');
         }
 
-        if ($request->filled('status'))
-        {
-            $data['status'] = $request->input('status');
-        }
-
         if ($request->filled('tenggat'))
         {
             $data['tenggat'] = $request->input('tenggat');
         }
+
+        // Auto-calculate status based on tasks
+        $data['status'] = $this->calculateProjectStatus($projectId);
 
         $project->update($data);
 
@@ -142,6 +139,31 @@ class ProjectController extends Controller
             'success'=>true,
             'message'=>'project berhasil dihapus'
         ]);
+    }
+
+    /**
+     * Calculate project status based on tasks
+     * - pending: no tasks
+     * - in progress: has tasks but not all completed
+     * - completed: all tasks completed
+     */
+    private function calculateProjectStatus($projectId)
+    {
+        $totalTasks = task::where('project_id', $projectId)->count();
+        
+        if ($totalTasks === 0) {
+            return 'pending';
+        }
+        
+        $completedTasks = task::where('project_id', $projectId)
+                               ->where('finish', true)
+                               ->count();
+        
+        if ($completedTasks === $totalTasks) {
+            return 'completed';
+        }
+        
+        return 'in progress';
     }
 
 }

@@ -214,18 +214,19 @@ $(document).ready(function () {
             url: `${API_URL}/users/project/${projectId}/tasks/${taskId}`,
             method: "PUT",
             headers: getAuthHeader(),
-            data: data,
+            contentType: "application/json",
+            data: JSON.stringify(data),
             success: function () {
                 loadTasks();
             },
             error: function (xhr) {
-                console.error(xhr.responseText);
+                console.error("Update Task Error:", xhr.responseText);
                 if (xhr.status === 403) {
                     alert("Anda tidak memiliki akses untuk mengubah tugas ini");
                     window.location.href = "projects.html";
                     return;
                 }
-                alert("Gagal update task");
+                alert("Gagal memperbarui task");
             }
         });
     }

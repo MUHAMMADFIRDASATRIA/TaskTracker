@@ -316,8 +316,17 @@ function loadProjectData() {
             $("#edit_project_id").val(projectId);
             $("#edit_title").val(project.title);
             $("#edit_description").val(project.description);
-            $("#edit_status").val(project.status);
             $("#edit_tenggat").val(project.tenggat);
+            
+            // Display status as badge (read-only)
+            const statusMap = {
+                'pending': { class: 'bg-slate-500/10 text-slate-400 border border-slate-500/20', label: 'Pending' },
+                'in progress': { class: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20', label: 'In Progress' },
+                'completed': { class: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20', label: 'Completed' }
+            };
+            const status = project.status?.toLowerCase() || 'pending';
+            const statusStyle = statusMap[status] || statusMap['pending'];
+            $("#edit_status").removeClass().addClass(`px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${statusStyle.class}`).text(statusStyle.label);
         },
         error: function(err) {
             console.error("Load Project Error:", err.responseJSON);
@@ -342,10 +351,9 @@ function handleEditProjectForm() {
         const projectId = $("#edit_project_id").val();
         const title = $("#edit_title").val();
         const description = $("#edit_description").val();
-        const status = $("#edit_status").val();
         const tenggat = $("#edit_tenggat").val();
 
-        console.log("Update Project Data:", { projectId, title, description, status, tenggat });
+        console.log("Update Project Data:", { projectId, title, description, tenggat });
 
         $.ajax({
             url: `${API_URL}/users/project/${projectId}/update`,
@@ -355,7 +363,6 @@ function handleEditProjectForm() {
             data: JSON.stringify({
                 title: title,
                 description: description,
-                status: status,
                 tenggat: tenggat
             }),
             success: function(res) {
@@ -456,10 +463,9 @@ $(document).ready(function () {
 
         const title = $("#title").val();
         const description = $("#description").val();
-        const status = $("#status").val();
         const tenggat = $("#tenggat").val();
 
-        console.log("Create Project Data:", { title, description, status, tenggat });
+        console.log("Create Project Data:", { title, description, tenggat });
 
         $.ajax({
             url: `${API_URL}/users/project/create`,
@@ -469,7 +475,6 @@ $(document).ready(function () {
             data: JSON.stringify({
                 title: title,
                 description: description,
-                status: status,
                 tenggat: tenggat
             }),
             success: function(res) {

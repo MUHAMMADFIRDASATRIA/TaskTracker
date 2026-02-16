@@ -136,8 +136,11 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-300 mb-1.5">Status</label>
-                                        <input type="text" id="edit_status" class="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2.5 text-sm text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-cyan-500/50 outline-none transition-all" placeholder="Masukkan status proyek">
+                                        <label class="block text-sm font-semibold text-slate-300 mb-1.5">Status Proyek</label>
+                                        <div class="w-full bg-slate-900/30 border border-slate-700/50 rounded-lg p-2.5 text-sm flex items-center gap-2">
+                                            <span id="edit_status" class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Loading...</span>
+                                            <span class="text-[10px] text-slate-500 italic ml-auto">Auto-calculated</span>
+                                        </div>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-slate-300 mb-1.5">Tenggat Waktu</label>
@@ -151,6 +154,17 @@
                                     <textarea id="edit_description" rows="3"
                                         class="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2.5 text-sm text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-cyan-500/50 outline-none transition-all"
                                         placeholder="Jelaskan detail proyek Anda..."></textarea>
+                                </div>
+                                
+                                <!-- Status Info -->
+                                <div class="bg-cyan-500/5 border border-cyan-500/20 rounded-lg p-3">
+                                    <div class="flex items-start gap-2">
+                                        <i data-lucide="info" size="16" class="text-cyan-400 mt-0.5"></i>
+                                        <div>
+                                            <p class="text-xs font-semibold text-cyan-400 mb-0.5">Status Otomatis</p>
+                                            <p class="text-xs text-slate-400">Status proyek diatur otomatis berdasarkan progress tugas dan tidak dapat diubah manual.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

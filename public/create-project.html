@@ -76,6 +76,7 @@
                 <span class="sidebar-text text-sm font-medium">Profil</span>
             </a>
         </nav>
+    </aside>
 
     <!-- MAIN -->
     <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10">
@@ -136,26 +137,15 @@
                                         placeholder="Contoh: Implementasi API v2.0">
                                 </div>
 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    <!-- Deadline -->
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-300 mb-1.5">
-                                            Tenggat Waktu
-                                        </label>
-                                        <input type="datetime-local" id="tenggat"
-                                            class="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2.5 text-sm text-slate-100 focus:ring-2 focus:ring-cyan-500/50 outline-none transition-all">
-                                    </div>
-                                    
-                                    <!-- Status -->
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-300 mb-1.5">
-                                            Status Proyek
-                                        </label>
-                                        <input type="text" id="status"
-                                            class="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2.5 text-sm text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-cyan-500/50 outline-none transition-all"
-                                            placeholder="Contoh: Aktif, Pending, dll">
-                                    </div>
+                                <!-- Deadline -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-300 mb-1.5">
+                                        Tenggat Waktu
+                                    </label>
+                                    <input type="datetime-local" id="tenggat"
+                                        class="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2.5 text-sm text-slate-100 focus:ring-2 focus:ring-cyan-500/50 outline-none transition-all">
                                 </div>
+                            </div>
 
                                 <!-- Description -->
                                 <div>
@@ -165,6 +155,17 @@
                                     <textarea id="description" rows="3"
                                         class="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2.5 text-sm text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-cyan-500/50 outline-none transition-all"
                                         placeholder="Gambarkan tujuan dan cakupan pengerjaan proyek ini..."></textarea>
+                                </div>
+                                
+                                <!-- Status Info -->
+                                <div class="bg-cyan-500/5 border border-cyan-500/20 rounded-lg p-3">
+                                    <div class="flex items-start gap-2">
+                                        <i data-lucide="info" size="16" class="text-cyan-400 mt-0.5"></i>
+                                        <div>
+                                            <p class="text-xs font-semibold text-cyan-400 mb-0.5">Status Otomatis</p>
+                                            <p class="text-xs text-slate-400">Status proyek akan diatur otomatis berdasarkan progress tugas: <span class="font-semibold text-slate-300">Pending</span> (tanpa tugas), <span class="font-semibold text-slate-300">In Progress</span> (ada tugas berlangsung), <span class="font-semibold text-slate-300">Completed</span> (semua tugas selesai)</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

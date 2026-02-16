@@ -305,12 +305,6 @@ Kontribusi sangat diterima! Silakan:
 
 ---
 
-## 📄 License
-
-Proyek ini menggunakan lisensi MIT. Lihat file `LICENSE` untuk detail.
-
----
-
 ## 👨‍💻 Author
 
 **TaskTracker Team**

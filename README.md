@@ -29,11 +29,11 @@ TaskTracker adalah sistem manajemen pekerjaan yang dirancang untuk membantu tim 
 
 ### **Backend**
 
-| Technology  | Deskripsi                                 |
-| ----------- | ----------------------------------------- |
-| **Laravel** | Framework PHP untuk API dan logika bisnis |
-| **PHP**     | Bahasa pemrograman server-side            |
-| **MySQL**   | Database relasional                       |
+| Technology   | Deskripsi                                 |
+| ------------ | ----------------------------------------- |
+| **Laravel**  | Framework PHP untuk API dan logika bisnis |
+| **PHP**      | Bahasa pemrograman server-side            |
+| **Database** | Database relasional                       |
 
 ### **Development Tools**
 
@@ -41,48 +41,6 @@ TaskTracker adalah sistem manajemen pekerjaan yang dirancang untuk membantu tim 
 - **Composer** - Package manager PHP
 - **npm** - Package manager JavaScript
 - **PHPUnit** - Testing framework
-
----
-
-## 📁 Struktur Project
-
-```
-authsistem/
-├── public/               # Files publik (HTML, JS, CSS)
-│   ├── index.html       # Landing page
-│   ├── login.html       # Halaman login
-│   ├── register.html    # Halaman registrasi
-│   ├── dashboard.html   # Dashboard utama
-│   ├── profile.html     # Profil pengguna ⭐ (dengan upload foto)
-│   ├── projects.html    # Manajemen proyek
-│   ├── tasks.html       # Manajemen tugas
-│   ├── js/
-│   │   ├── auth.js      # Autentikasi & token management
-│   │   ├── profile.js   # ⭐ Upload & preview foto profil (jQuery)
-│   │   ├── projects.js  # CRUD proyek
-│   │   ├── tasks.js     # CRUD tugas
-│   │   └── ...
-│   ├── storage/         # Penyimpanan foto & file
-│   └── robots.txt
-├── app/
-│   ├── Http/
-│   │   └── Controllers/
-│   │       ├── AuthController.php
-│   │       └── ProfileController.php ⭐ (Handle upload foto)
-│   └── Models/
-│       ├── User.php     # ⭐ Model dengan accessor profile_photo
-│       ├── Project.php
-│       └── Task.php
-├── routes/
-│   └── api.php          # API routes
-├── database/
-│   ├── migrations/      # Database schema
-│   └── seeders/         # Database seeding
-└── resources/
-    ├── css/
-    ├── js/
-    └── views/           # Blade templates (jika diperlukan)
-```
 
 ---
 
@@ -169,7 +127,7 @@ npm run dev
 POST   /api/login              - Login user
 POST   /api/register           - Register user
 GET    /api/profile            - Get profile user
-PUT    /api/profile/edit       - Edit profile & upload foto ⭐
+PUT    /api/profile/edit       - Edit profile & upload foto
 DELETE /api/profile            - Delete account
 
 GET    /api/projects           - List proyek
@@ -358,19 +316,3 @@ Proyek ini menggunakan lisensi MIT. Lihat file `LICENSE` untuk detail.
 **TaskTracker Team**
 
 Dibuat dengan ❤️ menggunakan Laravel, jQuery, dan Tailwind CSS
-
----
-
-## 📞 Support
-
-Jika ada pertanyaan atau masalah, silakan buat issue di repository ini.
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

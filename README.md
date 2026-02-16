@@ -1,52 +1,369 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TaskTracker - Sistem Manajemen Proyek & Tugas
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+🚀 **TaskTracker** adalah aplikasi web modern untuk mengelola proyek dan tugas harian Anda dengan antarmuka yang intuitif dan responsif.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🎯 Tentang Proyek
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+TaskTracker adalah sistem manajemen pekerjaan yang dirancang untuk membantu tim dan individu:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- ✅ Membuat dan mengelola proyek
+- ✅ Membuat tugas dalam proyek
+- ✅ Mengedit profil pengguna
+- ✅ Upload foto profil dengan preview real-time
+- ✅ Manajemen akun dan keamanan
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🛠️ Teknologi yang Digunakan
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### **Frontend**
 
-## Laravel Sponsors
+| Technology       | Deskripsi                                           | Link                                         |
+| ---------------- | --------------------------------------------------- | -------------------------------------------- |
+| **HTML5**        | Markup semantik untuk struktur halaman              | [w3schools](https://www.w3schools.com/html/) |
+| **Tailwind CSS** | Framework CSS utility-first untuk styling responsif | [tailwindcss.com](https://tailwindcss.com)   |
+| **jQuery**       | Library JavaScript untuk manipulasi DOM dan AJAX    | [jquery.com](https://jquery.com)             |
+| **Lucide Icons** | Icon library modern dan ringan                      | [lucide.dev](https://lucide.dev)             |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### **Backend**
 
-### Premium Partners
+| Technology  | Deskripsi                                 |
+| ----------- | ----------------------------------------- |
+| **Laravel** | Framework PHP untuk API dan logika bisnis |
+| **PHP**     | Bahasa pemrograman server-side            |
+| **MySQL**   | Database relasional                       |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### **Development Tools**
 
-## Contributing
+- **Vite** - Module bundler modern
+- **Composer** - Package manager PHP
+- **npm** - Package manager JavaScript
+- **PHPUnit** - Testing framework
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 📁 Struktur Project
+
+```
+authsistem/
+├── public/               # Files publik (HTML, JS, CSS)
+│   ├── index.html       # Landing page
+│   ├── login.html       # Halaman login
+│   ├── register.html    # Halaman registrasi
+│   ├── dashboard.html   # Dashboard utama
+│   ├── profile.html     # Profil pengguna ⭐ (dengan upload foto)
+│   ├── projects.html    # Manajemen proyek
+│   ├── tasks.html       # Manajemen tugas
+│   ├── js/
+│   │   ├── auth.js      # Autentikasi & token management
+│   │   ├── profile.js   # ⭐ Upload & preview foto profil (jQuery)
+│   │   ├── projects.js  # CRUD proyek
+│   │   ├── tasks.js     # CRUD tugas
+│   │   └── ...
+│   ├── storage/         # Penyimpanan foto & file
+│   └── robots.txt
+├── app/
+│   ├── Http/
+│   │   └── Controllers/
+│   │       ├── AuthController.php
+│   │       └── ProfileController.php ⭐ (Handle upload foto)
+│   └── Models/
+│       ├── User.php     # ⭐ Model dengan accessor profile_photo
+│       ├── Project.php
+│       └── Task.php
+├── routes/
+│   └── api.php          # API routes
+├── database/
+│   ├── migrations/      # Database schema
+│   └── seeders/         # Database seeding
+└── resources/
+    ├── css/
+    ├── js/
+    └── views/           # Blade templates (jika diperlukan)
+```
+
+---
+
+## ⭐ Fitur Utama
+
+### 1. **Autentikasi & Keamanan**
+
+- Login dengan email & password
+- Register akun baru
+- Token-based authentication
+- Logout & session management
+
+### 2. **Manajemen Profil** 🎨
+
+- **View & Edit Profile**
+    - Ubah nama dan email
+    - Ganti password
+    - Upload foto profil dengan preview real-time
+
+- **Teknologi Upload Foto:**
+
+    ```javascript
+    // jQuery handling
+    - FileReader API untuk preview lokal
+    - FormData untuk multipart upload
+    - Validasi tipe file (JPG, JPEG, PNG)
+    - Validasi ukuran file (max 2MB)
+    - AJAX PUT request dengan headers auth
+    ```
+
+- **Backend Processing:**
+    ```php
+    // Laravel & PHP
+    - Storage facade untuk simpan file
+    - Konversi path → URL accessor
+    - Soft delete foto lama
+    - Return URL foto di response
+    ```
+
+### 3. **Manajemen Proyek**
+
+- Buat, baca, ubah, hapus proyek
+- List proyek dengan filter
+
+### 4. **Manajemen Tugas**
+
+- Buat tugas dalam proyek
+- Update status tugas
+- Hapus tugas
+
+---
+
+## 🚀 Quick Start
+
+### Instalasi
+
+```bash
+# Clone repository
+git clone <repo-url>
+cd authsistem
+
+# Install dependencies
+composer install
+npm install
+
+# Setup environment
+cp .env.example .env
+php artisan key:generate
+
+# Database setup
+php artisan migrate
+php artisan storage:link
+
+# Run development server
+php artisan serve
+
+# Build frontend assets
+npm run dev
+```
+
+### API Endpoints
+
+```
+POST   /api/login              - Login user
+POST   /api/register           - Register user
+GET    /api/profile            - Get profile user
+PUT    /api/profile/edit       - Edit profile & upload foto ⭐
+DELETE /api/profile            - Delete account
+
+GET    /api/projects           - List proyek
+POST   /api/projects           - Buat proyek
+PUT    /api/projects/{id}      - Edit proyek
+DELETE /api/projects/{id}      - Hapus proyek
+
+GET    /api/tasks              - List tugas
+POST   /api/tasks              - Buat tugas
+PUT    /api/tasks/{id}         - Edit tugas
+DELETE /api/tasks/{id}         - Hapus tugas
+```
+
+---
+
+## 💡 Contoh Penggunaan jQuery untuk Upload Foto
+
+```javascript
+// 1. Preview foto sebelum upload
+$("#profile-photo-input").on("change", function (e) {
+    const file = this.files[0];
+
+    // Validasi
+    if (file.size > 2 * 1024 * 1024) {
+        alert("File terlalu besar!");
+        return;
+    }
+
+    // Preview dengan FileReader
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        $("#profile-photo-preview")
+            .attr("src", event.target.result)
+            .removeClass("hidden");
+    };
+    reader.readAsDataURL(file);
+});
+
+// 2. Upload dengan AJAX
+$("#profileForm").submit(function (e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", $("#name").val());
+    formData.append("profile_photo", $("#profile-photo-input")[0].files[0]);
+
+    $.ajax({
+        url: "/api/profile/edit",
+        method: "PUT",
+        headers: { Authorization: "Bearer " + token },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (res) {
+            // Update preview dengan URL dari server
+            $("#profile-photo-preview").attr("src", res.data.profile_photo);
+        },
+    });
+});
+```
+
+---
+
+## 🎨 Styling dengan Tailwind CSS
+
+Semua halaman menggunakan **Tailwind CSS** untuk styling:
+
+```html
+<!-- Responsive Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- Dark Theme dengan Gradients -->
+    <div class="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg">
+        <!-- Hover & Transition Effects -->
+        <button
+            class="hover:from-cyan-400 hover:to-blue-500 transition-all"
+        ></button>
+    </div>
+</div>
+```
+
+**Fitur Tailwind yang Digunakan:**
+
+- ✅ Responsive Design (mobile-first)
+- ✅ Dark theme (bg-slate-900, slate-800)
+- ✅ Gradient backgrounds
+- ✅ Animations & transitions
+- ✅ Flexbox & Grid layouts
+- ✅ Custom scrollbar styling
+- ✅ Shadow & blur effects
+
+---
+
+## 📝 HTML Best Practices
+
+Setiap halaman HTML mengikuti best practices:
+
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Title</title>
+
+    <!-- CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Dependencies -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-900 text-slate-100">
+    <!-- Semantic HTML5 -->
+    <header class="...">
+    <main class="...">
+    <aside class="...">
+    <footer class="...">
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>
+```
+
+---
+
+## 🔐 Security Features
+
+- ✅ **Token-based Authentication** - Bearer token di headers
+- ✅ **File Validation** - Validasi tipe & ukuran di client & server
+- ✅ **Password Hashing** - Laravel Hash facade
+- ✅ **CORS Protection** - API security
+- ✅ **Input Validation** - Server-side validation
+
+---
+
+## 📚 Dokumentasi Referensi
+
+### jQuery
+
+- [jQuery Documentation](https://jquery.com)
+- [jQuery AJAX](https://api.jquery.com/jquery.ajax/)
+- [jQuery DOM Manipulation](https://api.jquery.com/category/manipulation/)
+
+### Tailwind CSS
+
+- [Tailwind Docs](https://tailwindcss.com/docs)
+- [Tailwind Components](https://tailwindcss.com/components)
+- [Responsive Design](https://tailwindcss.com/docs/responsive-design)
+
+### HTML5
+
+- [MDN HTML Reference](https://developer.mozilla.org/en-US/docs/Web/HTML)
+- [HTML5 Semantics](https://www.w3schools.com/html/html5_semantic_elements.asp)
+- [Accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
+
+### Laravel API
+
+- [Laravel Documentation](https://laravel.com/docs)
+- [Eloquent ORM](https://laravel.com/docs/eloquent)
+- [Storage Facade](https://laravel.com/docs/filesystem)
+
+---
+
+## 🤝 Contributing
+
+Kontribusi sangat diterima! Silakan:
+
+1. Fork repository
+2. Buat branch fitur (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buka Pull Request
+
+---
+
+## 📄 License
+
+Proyek ini menggunakan lisensi MIT. Lihat file `LICENSE` untuk detail.
+
+---
+
+## 👨‍💻 Author
+
+**TaskTracker Team**
+
+Dibuat dengan ❤️ menggunakan Laravel, jQuery, dan Tailwind CSS
+
+---
+
+## 📞 Support
+
+Jika ada pertanyaan atau masalah, silakan buat issue di repository ini.
 
 In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 

@@ -17,13 +17,25 @@ class User extends Authenticatable
         'email',
         'password',
         'api_token',
-        'exp_token'
+        'exp_token',
+        'profile_photo_path'
     ];
 
     protected $hidden = [
         'password',
         'api_token'
     ];
+
+    /**
+     * Get the profile photo URL
+     */
+    public function getProfilePhotoAttribute()
+    {
+        if ($this->profile_photo_path) {
+            return asset('storage/' . $this->profile_photo_path);
+        }
+        return null;
+    }
 
     public function projects()
     {

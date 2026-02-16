@@ -130,3 +130,14 @@ function logout() {
         window.location.href = "login.html";
     }
 }
+
+/* ==========================
+   SETUP LOGOUT BUTTON
+========================== */
+
+$(document).ready(function () {
+    $("#btnLogout").on("click", function (e) {
+        e.preventDefault();
+        logout();
+    });
+});

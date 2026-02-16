@@ -33,10 +33,13 @@ function loadProjects() {
 
             if (res.data.length === 0) {
                 $("#projectList").html(`
-                    <div class="text-center text-slate-500 py-12">
+                    <div class="text-center text-slate-400 py-12">
                         <div class="flex flex-col items-center">
-                            <i data-lucide="inbox" size="48" class="text-slate-300 mb-4"></i>
-                            <p class="text-lg font-medium">Belum ada project</p>
+                            <div class="w-20 h-20 bg-slate-800/50 rounded-2xl flex items-center justify-center mb-4 border border-slate-700/50">
+                                <i data-lucide="inbox" size="40" class="text-slate-600"></i>
+                            </div>
+                            <p class="text-lg font-semibold text-slate-300 mb-2">Belum ada proyek</p>
+                            <p class="text-sm text-slate-500">Mulai dengan membuat proyek baru</p>
                         </div>
                     </div>
                 `);
@@ -91,51 +94,116 @@ function loadTasksForProgress(project) {
 }
 
 /* ===========================
-   PROJECT CARD TEMPLATE
+   PROJECT CARD TEMPLATE - HORIZONTAL LIST LAYOUT
 =========================== */
 function projectCard(p) {
-    const progress = p.progress || 0; // Default 0% jika tidak ada progress
+    const progress = p.progress || 0;
     const tasksInfo = p.tasksInfo || { total: 0, completed: 0 };
+    
+    // Status color mapping
+    const statusColors = {
+        'pending': { bg: 'from-slate-600 to-slate-700', text: 'text-slate-300', dot: 'bg-slate-500' },
+        'in progress': { bg: 'from-cyan-600 to-blue-600', text: 'text-cyan-300', dot: 'bg-cyan-500' },
+        'completed': { bg: 'from-emerald-600 to-teal-600', text: 'text-emerald-300', dot: 'bg-emerald-500' },
+        'on hold': { bg: 'from-amber-600 to-orange-600', text: 'text-amber-300', dot: 'bg-amber-500' }
+    };
+    
+    const statusInfo = statusColors[p.status?.toLowerCase()] || statusColors['pending'];
+    
+    // Progress color based on percentage
+    let progressColor = 'from-rose-500 to-pink-600';
+    if (progress >= 75) progressColor = 'from-emerald-500 to-teal-600';
+    else if (progress >= 50) progressColor = 'from-cyan-500 to-blue-600';
+    else if (progress >= 25) progressColor = 'from-amber-500 to-orange-600';
+    
     return `
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col gap-3">
-        <div class="flex items-center gap-3 flex-1 min-w-0">
-            <div class="w-12 h-12 bg-gradient-to-br from-indigo-100 to-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 flex-shrink-0 shadow-sm">
-                <i data-lucide="folder" size="24"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <h3 class="text-base font-bold text-slate-900 truncate">${p.title}</h3>
-                <div class="flex flex-wrap items-center gap-2 mt-1">
-                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-0.5">
-                        <i data-lucide="calendar" size="11"></i> 
-                        ${p.tenggat ? p.tenggat : 'Belum diset'}
-                    </span>
-                    <span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold capitalize">${p.status || 'pending'}</span>
+    <div class="card-dark rounded-xl border border-slate-700/50 shadow-lg overflow-hidden card-hover fade-in relative group">
+        <!-- Glow effect on hover -->
+        <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/5 group-hover:to-blue-500/5 transition-all duration-300 pointer-events-none"></div>
+        
+        <!-- Card Content - Horizontal Layout -->
+        <div class="relative z-10 p-4 flex items-center gap-4">
+            
+            <!-- Left: Icon & Status Indicator -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="w-12 h-12 bg-gradient-to-br ${statusInfo.bg} rounded-lg flex items-center justify-center text-white shadow-lg">
+                    <i data-lucide="folder" size="20"></i>
                 </div>
-                <p class="text-xs text-slate-600 mt-0.5 line-clamp-1">${p.description || 'Tidak ada deskripsi'}</p>
             </div>
-        </div>
 
-        <!-- Progress Section -->
-        <div class="bg-slate-50 rounded-lg p-3 space-y-1.5">
-            <div class="flex justify-between items-center">
-                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Progres</span>
-                <span class="text-xs font-bold text-indigo-600">${progress}% (${tasksInfo.completed}/${tasksInfo.total})</span>
+            <!-- Center: Project Info -->
+            <div class="flex-1 min-w-0 space-y-2">
+                <!-- Title & Status & Deadline -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="text-base font-bold text-slate-100">${p.title}</h3>
+                    <div class="flex items-center gap-2">
+                        <div class="w-1 h-1 rounded-full ${statusInfo.dot}"></div>
+                        <span class="text-xs font-semibold ${statusInfo.text} capitalize">
+                            ${p.status || 'pending'}
+                        </span>
+                    </div>
+                    ${p.tenggat ? `
+                    <div class="flex items-center gap-1.5 text-slate-500 ml-auto">
+                        <i data-lucide="calendar" size="12"></i>
+                        <span class="text-xs font-medium">${p.tenggat}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <!-- Description -->
+                <p class="text-sm text-slate-400 line-clamp-1">${p.description || 'Tidak ada deskripsi'}</p>
             </div>
-            <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 h-full transition-all duration-500" style="width: ${Math.min(progress, 100)}%"></div>
+
+            <!-- Center-Right: Progress Info -->
+            <div class="hidden lg:flex items-center gap-4 flex-shrink-0 px-4 border-l border-slate-700/50">
+                <!-- Circular Progress -->
+                <div class="relative w-14 h-14">
+                    <svg class="w-full h-full transform -rotate-90">
+                        <circle cx="28" cy="28" r="24" stroke="currentColor" stroke-width="3" fill="transparent" class="text-slate-700" />
+                        <circle cx="28" cy="28" r="24" stroke="url(#grad-${p.id})" stroke-width="3" fill="transparent" 
+                            stroke-dasharray="150.8" stroke-dashoffset="${150.8 - (150.8 * progress / 100)}" stroke-linecap="round" class="transition-all duration-500" />
+                        <defs>
+                            <linearGradient id="grad-${p.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#22d3ee;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-xs font-bold ${statusInfo.text}">${progress}%</span>
+                    </div>
+                </div>
+                
+                <!-- Task Stats -->
+                <div class="text-right">
+                    <p class="text-xs text-slate-500 mb-0.5">Progress</p>
+                    <p class="text-sm font-bold text-slate-300">${tasksInfo.completed}<span class="text-slate-500 font-normal">/${tasksInfo.total}</span></p>
+                </div>
+            </div>
+            
+            <!-- Right: Minimalist Action Menu -->
+            <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                <button onclick="viewTasks(${p.id})" class="w-7 h-7 text-slate-400 hover:text-cyan-400 hover:bg-slate-800/50 rounded transition-all flex items-center justify-center" title="Lihat Detail">
+                    <i data-lucide="eye" size="14"></i>
+                </button>
+                <button onclick="editProject(${p.id})" class="w-7 h-7 text-slate-400 hover:text-cyan-400 hover:bg-slate-800/50 rounded transition-all flex items-center justify-center" title="Edit Proyek">
+                    <i data-lucide="pencil" size="14"></i>
+                </button>
+                <button onclick="deleteProject(${p.id})" class="w-7 h-7 text-slate-400 hover:text-rose-400 hover:bg-slate-800/50 rounded transition-all flex items-center justify-center" title="Hapus Proyek">
+                    <i data-lucide="trash-2" size="14"></i>
+                </button>
             </div>
         </div>
         
-        <div class="flex gap-1.5 pt-1">
-            <button onclick="viewTasks(${p.id})" class="flex-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg py-1.5 px-2 font-semibold flex items-center justify-center gap-1 transition-colors">
-                <i data-lucide="list" size="14"></i> <span class="hidden sm:inline">Lihat</span>
-            </button>
-            <button onclick="editProject(${p.id})" class="flex-1 text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg py-1.5 px-2 font-semibold flex items-center justify-center gap-1 transition-colors">
-                <i data-lucide="edit-2" size="14"></i> <span class="hidden sm:inline">Edit</span>
-            </button>
-            <button onclick="deleteProject(${p.id})" class="flex-1 text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg py-1.5 px-2 font-semibold flex items-center justify-center gap-1 transition-colors">
-                <i data-lucide="trash-2" size="14"></i> <span class="hidden sm:inline">Hapus</span>
-            </button>
+        <!-- Bottom: Progress Bar (Mobile & Tablet) -->
+        <div class="lg:hidden px-4 pb-3">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-slate-500 font-medium">Progress</span>
+                <span class="text-xs font-semibold ${statusInfo.text}">${progress}% · ${tasksInfo.completed}/${tasksInfo.total}</span>
+            </div>
+            <div class="w-full bg-slate-700/50 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-gradient-to-r ${progressColor} h-full transition-all duration-500" style="width: ${Math.min(progress, 100)}%"></div>
+            </div>
         </div>
     </div>
     `;
@@ -178,6 +246,11 @@ function deleteProject(id) {
         },
         error: function (xhr) {
             console.error(xhr.responseText);
+            if (xhr.status === 403) {
+                alert("Anda tidak memiliki akses untuk menghapus proyek ini");
+                loadProjects();
+                return;
+            }
             alert("Gagal menghapus proyek");
         }
     });
@@ -189,6 +262,14 @@ function deleteProject(id) {
 function getProjectIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
     return params.get('project_id');
+}
+
+/* ===========================
+   GET OPEN PROJECT ID (FROM DASHBOARD)
+=========================== */
+function getOpenProjectIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('open');
 }
 
 /* ===========================
@@ -208,21 +289,23 @@ function loadProjectData() {
         method: "GET",
         headers: getAuthHeader(),
         success: function(res) {
-            console.log("Project Data:", res.data); // Debug
+            console.log("Project Data:", res.data);
             
             const project = res.data;
             
-            // Set hidden input dengan project ID
             $("#edit_project_id").val(projectId);
-            
-            // Fill form dengan data project
             $("#edit_title").val(project.title);
             $("#edit_description").val(project.description);
             $("#edit_status").val(project.status);
             $("#edit_tenggat").val(project.tenggat);
         },
         error: function(err) {
-            console.error("Load Project Error:", err.responseJSON); // Debug
+            console.error("Load Project Error:", err.responseJSON);
+            if (err.status === 403) {
+                alert("Anda tidak memiliki akses ke proyek ini");
+                window.location.href = "projects.html";
+                return;
+            }
             alert("Gagal memuat data proyek");
             window.location.href = "projects.html";
         }
@@ -242,7 +325,7 @@ function handleEditProjectForm() {
         const status = $("#edit_status").val();
         const tenggat = $("#edit_tenggat").val();
 
-        console.log("Update Project Data:", { projectId, title, description, status, tenggat }); // Debug
+        console.log("Update Project Data:", { projectId, title, description, status, tenggat });
 
         $.ajax({
             url: `${API_URL}/users/project/${projectId}/update`,
@@ -256,14 +339,19 @@ function handleEditProjectForm() {
                 tenggat: tenggat
             }),
             success: function(res) {
-                console.log("Update Project Success:", res); // Debug
+                console.log("Update Project Success:", res);
                 alert("Proyek berhasil diperbarui ✅");
                 window.location.href = "projects.html";
             },
             error: function(err) {
-                console.error("Update Project Error:", err.responseJSON); // Debug
+                console.error("Update Project Error:", err.responseJSON);
                 
                 let message = "Gagal memperbarui proyek";
+                if (err.status === 403) {
+                    alert("Anda tidak memiliki akses untuk mengubah proyek ini");
+                    window.location.href = "projects.html";
+                    return;
+                }
                 if (err.responseJSON && err.responseJSON.message) {
                     message = err.responseJSON.message;
                 } else if (err.responseJSON && err.responseJSON.errors) {
@@ -292,12 +380,17 @@ function handleDeleteProjectButton() {
             method: "DELETE",
             headers: getAuthHeader(),
             success: function() {
-                console.log("Delete Project Success"); // Debug
+                console.log("Delete Project Success");
                 alert("Proyek berhasil dihapus ✅");
                 window.location.href = "projects.html";
             },
             error: function(err) {
-                console.error("Delete Project Error:", err.responseJSON); // Debug
+                console.error("Delete Project Error:", err.responseJSON);
+                if (err.status === 403) {
+                    alert("Anda tidak memiliki akses untuk menghapus proyek ini");
+                    window.location.href = "projects.html";
+                    return;
+                }
                 alert("Gagal menghapus proyek");
             }
         });
@@ -308,27 +401,30 @@ function handleDeleteProjectButton() {
    INIT
 =========================== */
 $(document).ready(function () {
-    // Load profile header di semua halaman (projects, edit, create)
+    checkAuth();
+
     loadProfileHeader();
+
+    const openProjectId = getOpenProjectIdFromUrl();
+    if (openProjectId) {
+        window.location.href = `tasks.html?project_id=${openProjectId}`;
+        return;
+    }
     
-    // Jika di halaman projects.html - load project list
     if ($("#projectList").length) {
         loadProjects();
     }
     
-    // Jika di halaman EditProjects.html - load project data dan setup form
     if ($("#editProjectForm").length) {
         loadProjectData();
         handleEditProjectForm();
         handleDeleteProjectButton();
     }
     
-    // Button tambah task -> redirect ke halaman create project
     $("#btnAddTask").on("click", function() {
         window.location.href = "create-project.html";
     });
 
-    // Handle form submit di create-project.html
     $("#createProjectForm").on("submit", function(e) {
         e.preventDefault();
 
@@ -337,7 +433,7 @@ $(document).ready(function () {
         const status = $("#status").val();
         const tenggat = $("#tenggat").val();
 
-        console.log("Create Project Data:", { title, description, status, tenggat }); // Debug
+        console.log("Create Project Data:", { title, description, status, tenggat });
 
         $.ajax({
             url: `${API_URL}/users/project/create`,
@@ -351,12 +447,12 @@ $(document).ready(function () {
                 tenggat: tenggat
             }),
             success: function(res) {
-                console.log("Create Project Success:", res); // Debug
+                console.log("Create Project Success:", res);
                 alert("Proyek berhasil dibuat ✅");
                 window.location.href = "projects.html";
             },
             error: function(err) {
-                console.error("Create Project Error:", err.responseJSON); // Debug
+                console.error("Create Project Error:", err.responseJSON);
                 
                 let message = "Gagal membuat proyek";
                 if (err.responseJSON && err.responseJSON.message) {

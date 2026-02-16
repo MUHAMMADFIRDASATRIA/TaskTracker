@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    checkAuth();
 
     /* ======================
        GET PROJECT ID
@@ -65,6 +66,11 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
+                if (xhr.status === 403) {
+                    alert("Anda tidak memiliki akses ke proyek ini");
+                    window.location.href = "projects.html";
+                    return;
+                }
                 alert("Gagal mengambil detail project");
             }
         });
@@ -124,6 +130,11 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
+                if (xhr.status === 403) {
+                    alert("Anda tidak memiliki akses ke tugas proyek ini");
+                    window.location.href = "projects.html";
+                    return;
+                }
                 alert("Gagal mengambil tasks");
             }
         });
@@ -163,6 +174,11 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
+                if (xhr.status === 403) {
+                    alert("Anda tidak memiliki akses untuk menambahkan tugas di proyek ini");
+                    window.location.href = "projects.html";
+                    return;
+                }
                 alert("Gagal menambahkan task");
             }
         });
@@ -183,6 +199,11 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
+                if (xhr.status === 403) {
+                    alert("Anda tidak memiliki akses untuk mengubah tugas ini");
+                    window.location.href = "projects.html";
+                    return;
+                }
                 alert("Gagal update task");
             }
         });
@@ -204,6 +225,11 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
+                if (xhr.status === 403) {
+                    alert("Anda tidak memiliki akses untuk menghapus tugas ini");
+                    window.location.href = "projects.html";
+                    return;
+                }
                 alert("Gagal hapus task");
             }
         });

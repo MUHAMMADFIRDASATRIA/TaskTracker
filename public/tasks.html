@@ -12,160 +12,247 @@
     <style>       
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes glow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 30px rgba(34, 211, 238, 0.5);
+        }
+        
+        .glass-dark {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        
+        .card-dark {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+        }
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900 overflow-hidden">
+<body class="bg-slate-900 text-slate-100 overflow-hidden">
 
 <div class="flex h-screen overflow-hidden">
 
-    <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col z-20 shrink-0 hidden md:flex">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-56 glass-dark border-r border-slate-700/50 flex flex-col z-20 shrink-0 relative">
         <div class="p-6 flex items-center gap-3">
-            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg shadow-indigo-100">
-                <i data-lucide="check-circle" stroke-width="3" size="18"></i>
+            <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg shadow-cyan-500/50">
+                <i data-lucide="check-circle" stroke-width="2.5" size="18"></i>
             </div>
-            <span class="font-bold text-xl tracking-tight text-slate-800">TaskTracker</span>
+            <span class="sidebar-text font-bold text-xl tracking-tight bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">TaskTracker</span>
         </div>
 
         <nav class="flex-1 px-4 space-y-1.5 mt-4">
-            <a href="dashboard.html" class="flex items-center gap-3 p-3 rounded-xl transition-all text-slate-500 hover:bg-slate-50 hover:text-slate-900">
+            <a href="dashboard.html" class="flex items-center gap-3 p-3 rounded-lg transition-all text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400">
                 <i data-lucide="layout-dashboard" size="18"></i>
-                <span class="text-sm font-medium">Dashboard</span>
+                <span class="sidebar-text text-sm">Dashboard</span>
             </a>
-            <a href="projects.html" class="flex items-center gap-3 p-3 rounded-xl transition-all bg-indigo-50 text-indigo-600 font-bold shadow-sm shadow-indigo-50/50">
+            <a href="projects.html" class="flex items-center gap-3 p-3 rounded-lg transition-all bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold shadow-lg shadow-cyan-500/30">
                 <i data-lucide="folder" size="18"></i>
-                <span class="font-medium text-sm">Proyek Saya</span>
+                <span class="sidebar-text font-medium text-sm">Proyek Saya</span>
             </a>
-            <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl transition-all text-slate-500 hover:bg-slate-50 hover:text-slate-900" >
+            <a href="profile.html" class="flex items-center gap-3 p-3 rounded-lg transition-all text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400">
                 <i data-lucide="user" size="18"></i>
-                <span class="text-sm font-medium">Profil</span>
+                <span class="sidebar-text text-sm">Profil</span>
             </a>
         </nav>
+        
+        <!-- Decorative glow -->
+        <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-cyan-500/10 to-transparent pointer-events-none"></div>
     </aside>
 
     <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         
-        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10">
-            <div class="flex items-center gap-4">
-                <a href="projects.html" class="flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors">
-                    <i data-lucide="arrow-left" size="16"></i>
-                    <span class="text-sm font-medium">Kembali</span>
-                </a>
-            </div>
+        <!-- Background decoration -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <!-- Header -->
+        <header class="h-20 glass-dark border-b border-slate-700/50 flex items-center justify-between px-8 shrink-0 z-10 relative">
+            <a href="projects.html" class="flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition-colors">
+                <i data-lucide="arrow-left" size="16"></i>
+                <span class="text-sm font-medium">Kembali</span>
+            </a>
 
             <div class="flex items-center gap-3">
                 <div class="text-right hidden sm:block">
-                    <p id="header-name" class="text-sm font-semibold text-slate-800">Memuat...</p>
+                    <p id="header-name" class="text-sm font-semibold text-slate-200">Memuat...</p>
                     <p class="text-xs text-slate-500">Pengguna</p>
                 </div>
-                <div id="header-avatar" class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm border border-indigo-200">
+                <div id="header-avatar" class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-cyan-500/50">
                     U
                 </div>
             </div>
         </header>
 
-        <div class="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10">
-            <div class="max-w-6xl mx-auto space-y-8">
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-6 relative z-10">
+            <div class="max-w-6xl mx-auto space-y-6">
 
-                <section class="grid lg:grid-cols-[420px_1fr] gap-8 items-start">
-                    
-                    <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between gap-6 relative overflow-hidden">
-                        <div class="relative w-36 h-36 shrink-0">
-                            <svg class="w-full h-full transform -rotate-90">
-                                <circle cx="72" cy="72" r="60" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-100" />
-                                <circle id="progress-ring" cx="72" cy="72" r="60" stroke="currentColor" stroke-width="12" fill="transparent" 
-                                    stroke-dasharray="377" stroke-dashoffset="377" stroke-linecap="round" class="text-indigo-600 transition-all duration-1000 ease-out" />
-                            </svg>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <span id="hero-percentage" class="text-3xl font-bold text-slate-800">0%</span>
-                                <span class="text-xs text-slate-400 font-medium uppercase tracking-wide">Selesai</span>
-                            </div>
-                        </div>
+                <!-- Compact Hero Section -->
+                <section class="fade-in">
+                    <div class="card-dark p-6 rounded-2xl border border-slate-700/50 shadow-2xl relative overflow-hidden">
+                        <!-- Glow effect -->
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl"></div>
+                        
+                        <div class="grid lg:grid-cols-[1fr_180px] gap-6 items-start relative z-10">
+                            
+                            <!-- Project Info - Compact -->
+                            <div class="space-y-4">
+                                <!-- Title & Badges -->
+                                <div>
+                                    <h1 id="hero-title-main" class="text-3xl font-bold text-slate-100 mb-3 leading-tight glow-text">
+                                        Memuat...
+                                    </h1>
+                                    
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/30">
+                                            <i data-lucide="activity" size="11"></i>
+                                            <span id="badge-status">In Progress</span>
+                                        </span>
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-700/50 text-slate-300 border border-slate-600/50">
+                                            <i data-lucide="layers" size="11"></i>
+                                            <span id="badge-total">0 Tugas</span>
+                                        </span>
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-700/50 text-slate-300 border border-slate-600/50">
+                                            <i data-lucide="clock" size="11"></i>
+                                            <span id="badge-deadline">-</span>
+                                        </span>
+                                    </div>
+                                </div>
 
-                        <div class="space-y-4 w-full">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
-                                    <span class="text-sm text-slate-500">Selesai</span>
+                                <!-- Description - Compact -->
+                                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 backdrop-blur-sm">
+                                    <div class="flex items-start gap-2 mb-2">
+                                        <i data-lucide="file-text" size="16" class="text-cyan-400 mt-0.5 flex-shrink-0"></i>
+                                        <div class="min-w-0 flex-1">
+                                            <h3 class="font-semibold text-sm text-slate-200 mb-1">Deskripsi Proyek</h3>
+                                            <p id="project-description" class="text-slate-400 text-sm leading-relaxed">
+                                                Deskripsi proyek sedang dimuat...
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <span id="stat-completed" class="font-bold text-slate-800">0</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full bg-amber-400"></div>
-                                    <span class="text-sm text-slate-500">Tertunda</span>
+
+                                <!-- Compact Stats Row -->
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div class="bg-gradient-to-br from-emerald-600 to-teal-600 p-3 rounded-xl shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                                        <div class="relative z-10">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <i data-lucide="check-circle" size="16" class="text-white"></i>
+                                                <p class="text-xs text-emerald-50 font-medium">Selesai</p>
+                                            </div>
+                                            <p id="stat-completed" class="text-2xl font-bold text-white">0</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-gradient-to-br from-amber-600 to-orange-600 p-3 rounded-xl shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                                        <div class="relative z-10">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <i data-lucide="clock" size="16" class="text-white"></i>
+                                                <p class="text-xs text-amber-50 font-medium">Tertunda</p>
+                                            </div>
+                                            <p id="stat-pending" class="text-2xl font-bold text-white">0</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-gradient-to-br from-rose-600 to-pink-600 p-3 rounded-xl shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                                        <div class="relative z-10">
+                                            <div class="flex flex-col">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <i data-lucide="calendar" size="16" class="text-white"></i>
+                                                    <p class="text-xs text-rose-50 font-medium">Deadline</p>
+                                                </div>
+                                                <p id="stat-deadline" class="text-sm font-bold text-white truncate">-</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <span id="stat-pending" class="font-bold text-slate-800">0</span>
                             </div>
-                            <div class="pt-3 border-t border-slate-100 mt-2">
-                                <div class="flex flex-col">
-                                    <span class="text-xs text-slate-400 mb-1">Deadline Terdekat</span>
-                                    <div class="flex items-center gap-2 text-slate-700 font-semibold">
-                                        <i data-lucide="calendar" size="14" class="text-indigo-500"></i>
-                                        <span id="stat-deadline">-</span>
+
+                            <!-- Compact Progress Circle -->
+                            <div class="flex justify-center lg:justify-end">
+                                <div class="bg-slate-800/50 p-5 rounded-2xl border border-slate-700/50 backdrop-blur-sm glow-effect">
+                                    <div class="relative w-32 h-32">
+                                        <svg class="w-full h-full transform -rotate-90">
+                                            <defs>
+                                                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" style="stop-color:#22d3ee;stop-opacity:1" />
+                                                    <stop offset="50%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                                    <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                                </linearGradient>
+                                                <filter id="glow">
+                                                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                                    <feMerge>
+                                                        <feMergeNode in="coloredBlur"/>
+                                                        <feMergeNode in="SourceGraphic"/>
+                                                    </feMerge>
+                                                </filter>
+                                            </defs>
+                                            <circle cx="64" cy="64" r="56" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-700" />
+                                            <circle id="progress-ring" cx="64" cy="64" r="56" stroke="url(#progressGradient)" stroke-width="8" fill="transparent" 
+                                                stroke-dasharray="352" stroke-dashoffset="352" stroke-linecap="round" class="transition-all duration-1000 ease-out" filter="url(#glow)" />
+                                        </svg>
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                            <span id="hero-percentage" class="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">0%</span>
+                                            <span class="text-[10px] text-slate-500 font-semibold uppercase tracking-wide">Selesai</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="flex flex-col justify-center h-full space-y-6 pt-2">
-                        <div>
-                            <h1 id="hero-title-main" class="text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight mb-4">
-                                Memuat...
-                            </h1>
-                            
-                            <div class="flex flex-wrap items-center gap-3">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
-                                    <i data-lucide="activity" size="12"></i>
-                                    <span id="badge-status">In Progress</span>
-                                </span>
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100">
-                                    <i data-lucide="layers" size="12"></i>
-                                    <span id="badge-total">0 Tugas</span>
-                                </span>
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-100">
-                                    <i data-lucide="clock" size="12"></i>
-                                    <span id="badge-deadline">-</span>
-                                </span>
-                            </div>
-                        </div>
-
-                        <p id="project-description" class="text-slate-500 text-lg leading-relaxed max-w-2xl">
-                            Deskripsi proyek sedang dimuat...
-                        </p>
-
-                        <div>
-                            <button class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-indigo-200 transition-all transform active:scale-95">
-                                <i data-lucide="refresh-cw" size="18"></i>
-                                Ubah Status Proyek
-                            </button>
-                        </div>
-                    </div>
                 </section>
 
-                <section class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-white border border-slate-200 rounded-lg shadow-sm">
-                                <i data-lucide="list-todo" size="20" class="text-slate-600"></i>
+                <!-- Tasks Section - Compact -->
+                <section class="fade-in card-dark rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden" style="animation-delay: 0.1s;">
+                    <div class="p-4 border-b border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+                        <div class="flex items-center justify-between flex-wrap gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-lg shadow-lg shadow-cyan-500/30">
+                                    <i data-lucide="list-todo" size="18" class="text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-200 text-base">Daftar Tugas</h3>
+                                    <p class="text-xs text-slate-500">Kelola semua tugas dalam proyek ini</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-bold text-slate-800 text-lg">Daftar Tugas</h3>
-                                <p class="text-xs text-slate-500">Kelola semua tugas dalam proyek ini</p>
-                            </div>
-                        </div>
 
-                        <a id="btn-add-task" href="#" class="inline-flex items-center gap-2 text-sm font-semibold bg-slate-900 text-white px-4 py-2.5 rounded-xl hover:bg-slate-800 transition shadow-md shadow-slate-200">
-                            <i data-lucide="plus" size="16"></i>
-                            Tambah Tugas Baru
-                        </a>
+                            <a id="btn-add-task" href="#" class="inline-flex items-center gap-2 text-sm font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-cyan-500 hover:to-blue-500 transition shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50">
+                                <i data-lucide="plus" size="16"></i>
+                                Tambah Tugas
+                            </a>
+                        </div>
                     </div>
 
-                    <div id="tasks-list-container" class="divide-y divide-slate-100">
-                        <div class="p-8 text-center text-slate-500 italic">
-                            Memuat daftar tugas...
+                    <div id="tasks-list-container" class="divide-y divide-slate-700/50">
+                        <div class="p-8 text-center">
+                            <div class="inline-flex items-center justify-center w-12 h-12 bg-slate-800/50 rounded-full mb-3 border border-slate-700/50">
+                                <i data-lucide="loader" size="20" class="text-cyan-400 animate-spin"></i>
+                            </div>
+                            <p class="text-slate-400 text-sm font-medium">Memuat daftar tugas...</p>
                         </div>
                     </div>
                 </section>

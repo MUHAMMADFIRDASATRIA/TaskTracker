@@ -40,6 +40,12 @@
             backdrop-filter: blur(16px);
             border-color: rgba(30, 41, 59, 0.5);
         }
+
+        .task-scroll {
+            max-height: 55vh;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
         
         .card-dark {
             background: linear-gradient(145deg, #1e293b, #0f172a);
@@ -288,7 +294,7 @@
                         </div>
                     </div>
 
-                    <div id="tasks-list-container" class="p-4 space-y-3">
+                    <div id="tasks-list-container" class="p-4 space-y-3 task-scroll custom-scrollbar">
                         <div class="p-8 text-center">
                             <div class="inline-flex items-center justify-center w-12 h-12 bg-slate-800/50 rounded-full mb-3 border border-slate-700/50">
                                 <i data-lucide="loader" size="20" class="text-cyan-400 animate-spin"></i>

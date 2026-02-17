@@ -34,6 +34,7 @@ $(document).ready(function () {
                 $("#task_title").val(task.title);
                 $("#notes").val(task.description);
                 $("#deadline").val(task.tenggat);
+                $("#priority").val(task.priority || "medium");
                 $("#finish").prop("checked", task.finish);
                 
                 // Update badge
@@ -62,6 +63,7 @@ $(document).ready(function () {
         const description = $("#notes").val().trim();
         const tenggat = $("#deadline").val();
         const finish = $("#finish").is(":checked");
+        const priority = $("#priority").val();
 
         if (!title) {
             alert("Judul task tidak boleh kosong");
@@ -71,7 +73,8 @@ $(document).ready(function () {
         const data = {
             title: title,
             description: description,
-            finish: finish
+            finish: finish,
+            priority: priority
         };
 
         if (tenggat) {

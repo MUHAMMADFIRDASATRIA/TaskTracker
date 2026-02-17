@@ -49,12 +49,14 @@ class TaskController extends Controller
 
         $title = $request->input('title');
         $description = $request->input('description');
+        $priority = $request->input('priority');
         $finish = $request->input('finish');
 
         $task = task::create([
             'project_id' => $projectId,
             'title' => $title,
             'description' => $description,
+            'priority' => $priority,
             'finish' => $finish
         ]);
 
@@ -194,7 +196,7 @@ class TaskController extends Controller
             if ($completedTasks === $totalTasks) {
                 $project->status = 'completed';
             } else {
-                $project->status = 'in progress';
+                $project->status = 'progress';
             }
         }
         

@@ -138,7 +138,30 @@ $(document).ready(function () {
                     return;
                 }
 
-                tasks.forEach(task => {
+                const priorityOrder = { high: 0, medium: 1, low: 2 };
+                const sortedTasks = tasks
+                    .slice()
+                    .sort((a, b) => {
+                        const aDone = a.finish ? 1 : 0;
+                        const bDone = b.finish ? 1 : 0;
+
+                        if (aDone !== bDone) {
+                            return aDone - bDone;
+                        }
+
+                        const aPriority = (a.priority || "medium").toLowerCase();
+                        const bPriority = (b.priority || "medium").toLowerCase();
+                        const aRank = priorityOrder[aPriority] ?? 1;
+                        const bRank = priorityOrder[bPriority] ?? 1;
+
+                        if (aRank !== bRank) {
+                            return aRank - bRank;
+                        }
+
+                        return (b.id || 0) - (a.id || 0);
+                    });
+
+                sortedTasks.forEach(task => {
                     container.append(renderTask(task));
                 });
 
@@ -171,6 +194,7 @@ $(document).ready(function () {
         const title = $("#task_title").val().trim();
         const notes = $("#notes").val();
         const finish = $("#finish").is(":checked");
+        const priority = $("#priority").val();
 
         if (!title) {
             alert("Judul task wajib diisi");
@@ -184,7 +208,8 @@ $(document).ready(function () {
             data: {
                 title: title,
                 description: notes,
-                finish: finish
+                finish: finish,
+                priority: priority
             },
             success: function () {
 
@@ -265,13 +290,25 @@ $(document).ready(function () {
         const isCompleted = task.finish;
         
         // Priority Styling logic
-        const priority = (task.priority || "Sedang").toLowerCase();
-        const pStyles = {
-            'tinggi': 'bg-rose-500/20 text-rose-300 border border-rose-500/30',
-            'sedang': 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
-            'rendah': 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+        const priorityKey = (task.priority || "medium").toLowerCase();
+        const priorityMeta = {
+            high: {
+                label: "High",
+                pill: "bg-gradient-to-r from-rose-600/30 to-rose-500/10 text-rose-200 border border-rose-500/30 shadow-[0_0_12px_rgba(244,63,94,0.25)]",
+                dot: "bg-rose-400"
+            },
+            medium: {
+                label: "Medium",
+                pill: "bg-gradient-to-r from-amber-500/30 to-amber-400/10 text-amber-200 border border-amber-400/30 shadow-[0_0_12px_rgba(251,191,36,0.2)]",
+                dot: "bg-amber-400"
+            },
+            low: {
+                label: "Low",
+                pill: "bg-gradient-to-r from-emerald-500/30 to-emerald-400/10 text-emerald-200 border border-emerald-400/30 shadow-[0_0_12px_rgba(16,185,129,0.2)]",
+                dot: "bg-emerald-400"
+            }
         };
-        const pClass = pStyles[priority] || pStyles['sedang'];
+        const priority = priorityMeta[priorityKey] || priorityMeta.medium;
         
         // Format status badge styling
         const statusText = isCompleted ? 'Selesai' : 'Sedang Berjalan';
@@ -306,10 +343,6 @@ $(document).ready(function () {
 
                     <!-- Meta Info Row -->
                     <div class="flex items-center gap-3 text-xs">
-                        <div class="flex items-center gap-1.5 text-slate-500">
-                            <i data-lucide="calendar" size="14"></i>
-                            <span>${dateStr}</span>
-                        </div>
                         <div class="flex items-center gap-1.5">
                             <i data-lucide="check-circle" size="14" class="${isCompleted ? 'text-emerald-400' : 'text-blue-400'}"></i>
                             <span class="px-2 py-0.5 rounded ${statusClass} text-xs font-medium">
@@ -322,8 +355,11 @@ $(document).ready(function () {
                 <!-- Priority Badge & Actions -->
                 <div class="shrink-0 flex items-start gap-2">
                     <!-- Priority Badge -->
-                    <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide ${pClass}">
-                        ${priority}
+                    <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide ${priority.pill}">
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full ${priority.dot}"></span>
+                            ${priority.label}
+                        </span>
                     </span>
 
                     <!-- Actions (show on hover) -->

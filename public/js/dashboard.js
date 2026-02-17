@@ -116,8 +116,9 @@ function loadAllTasks(projects) {
                         pendingTasks: pendingTasks
                     });
                     
-                    // Render task table (show recent 10 tasks)
-                    renderTaskTable(allTasks.slice(0, 10));
+                        const activeTasks = allTasks.filter(task => !task.finish);
+                        // Render task table (show recent 10 active tasks)
+                        renderTaskTable(activeTasks.slice(0, 10));
                 }
             }
         });
@@ -200,7 +201,7 @@ function renderTaskTable(tasks) {
     if (tasks.length === 0) {
         $("#task-table-body").html(`
             <tr>
-                <td colspan="5" class="px-6 py-12 text-center">
+                <td colspan="4" class="px-6 py-12 text-center">
                     <div class="flex flex-col items-center gap-3">
                         <div class="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center border border-slate-700/50">
                             <i data-lucide="inbox" size="32" class="text-slate-600"></i>
@@ -255,24 +256,9 @@ function renderTaskTable(tasks) {
                     </div>
                 </td>
                 <td class="px-6 py-4">
-                    <div class="flex items-center gap-1.5 text-slate-400">
-                        <i data-lucide="calendar" size="12"></i>
-                        <span class="text-xs">${task.tenggat || 'Tidak ada'}</span>
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center justify-center gap-1">
-                        <button onclick="viewTaskDetail(${task.projectId}, ${task.id})" 
-                                class="w-7 h-7 text-slate-400 hover:text-cyan-400 hover:bg-slate-800/50 rounded transition-all flex items-center justify-center" 
-                                title="Lihat Detail">
-                            <i data-lucide="eye" size="14"></i>
-                        </button>
-                        <button onclick="toggleTaskStatus(${task.projectId}, ${task.id}, ${task.finish})" 
-                                class="w-7 h-7 text-slate-400 hover:text-emerald-400 hover:bg-slate-800/50 rounded transition-all flex items-center justify-center" 
-                                title="Toggle Status">
-                            <i data-lucide="${task.finish ? 'x-circle' : 'check-circle'}" size="14"></i>
-                        </button>
-                    </div>
+                    <a href="tasks.html?project_id=${task.projectId}" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors">
+                        Buka Task
+                    </a>
                 </td>
             </tr>
         `;

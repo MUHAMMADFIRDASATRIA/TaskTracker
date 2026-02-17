@@ -144,7 +144,7 @@ class ProjectController extends Controller
     /**
      * Calculate project status based on tasks
      * - pending: no tasks
-     * - in progress: has tasks but not all completed
+    * - progress: has tasks but not all completed
      * - completed: all tasks completed
      */
     private function calculateProjectStatus($projectId)
@@ -163,7 +163,7 @@ class ProjectController extends Controller
             return 'completed';
         }
         
-        return 'in progress';
+        return 'progress';
     }
 
 }

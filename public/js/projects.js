@@ -2,6 +2,8 @@
    GLOBAL VARIABLES
 =========================== */
 let allProjects = []; // Store all projects for search filtering
+let currentFilter = "all";
+let currentSearch = "";
 
 /* ===========================
    LOAD PROFILE HEADER
@@ -49,27 +51,7 @@ function loadProjects() {
         success: function (res) {
             const projects = res.data ?? [];
             allProjects = projects; // Store globally for search
-            $("#projectList").empty();
-            $("#project-count").text(`${projects.length} Total Proyek Ditemukan`);
-
-            if (projects.length === 0) {
-                $("#projectList").html(`
-                    <div class="py-24 text-center">
-                        <i data-lucide="folder-x" size="48" class="text-slate-700 mx-auto mb-4"></i>
-                        <h3 class="text-lg font-bold text-slate-400">Belum ada proyek operasional</h3>
-                        <p class="text-sm text-slate-600">Klik "Proyek Baru" untuk memulai workspace Anda.</p>
-                    </div>
-                `);
-                lucide.createIcons();
-                return;
-            }
-
-            // Load progress untuk setiap project
-            projects.forEach(project => {
-                loadTasksForProgress(project);
-            });
-            
-            lucide.createIcons();
+            applyFilters();
         },
         error: function (xhr) {
             $("#projectList").html('<div class="py-20 text-center text-rose-500">Gagal memuat data proyek.</div>');
@@ -122,6 +104,7 @@ function projectCard(p) {
     const statusMap = {
         'pending': 'bg-slate-500/10 text-slate-500',
         'in progress': 'bg-cyan-500/10 text-cyan-500',
+        'progress': 'bg-cyan-500/10 text-cyan-500',
         'completed': 'bg-emerald-500/10 text-emerald-500',
         'on hold': 'bg-amber-500/10 text-amber-500'
     };
@@ -182,36 +165,42 @@ function projectCard(p) {
    SEARCH PROJECTS
 =========================== */
 function searchProjects(keyword) {
-    const searchTerm = keyword.toLowerCase().trim();
-    
-    if (!searchTerm) {
-        // If search is empty, reload all projects
-        $("#projectList").empty();
-        allProjects.forEach(project => {
-            loadTasksForProgress(project);
-        });
-        $("#project-count").text(`${allProjects.length} Total Proyek Ditemukan`);
-        return;
+    currentSearch = keyword.toLowerCase().trim();
+    applyFilters();
+}
+
+function normalizeStatus(status) {
+    const value = (status || "").toLowerCase();
+    if (value === "in progress") {
+        return "progress";
     }
-    
-    // Filter projects by title or description
+    return value;
+}
+
+function applyFilters() {
     const filtered = allProjects.filter(project => {
-        const title = (project.title || '').toLowerCase();
-        const description = (project.description || '').toLowerCase();
-        const status = (project.status || '').toLowerCase();
-        
-        return title.includes(searchTerm) || 
-               description.includes(searchTerm) || 
-               status.includes(searchTerm);
+        const title = (project.title || "").toLowerCase();
+        const description = (project.description || "").toLowerCase();
+        const status = normalizeStatus(project.status);
+
+        const matchSearch = !currentSearch
+            || title.includes(currentSearch)
+            || description.includes(currentSearch)
+            || status.includes(currentSearch);
+
+        const matchStatus = currentFilter === "all" || status === currentFilter;
+
+        return matchSearch && matchStatus;
     });
-    
-    // Update project count
-    $("#project-count").text(`${filtered.length} Proyek Ditemukan`);
-    
-    // Clear and render filtered results
+
+    renderProjectList(filtered);
+}
+
+function renderProjectList(projects) {
     $("#projectList").empty();
-    
-    if (filtered.length === 0) {
+    $("#project-count").text(`${projects.length} Proyek Ditemukan`);
+
+    if (projects.length === 0) {
         $("#projectList").html(`
             <div class="py-24 text-center">
                 <i data-lucide="search-x" size="48" class="text-slate-700 mx-auto mb-4"></i>
@@ -222,9 +211,8 @@ function searchProjects(keyword) {
         lucide.createIcons();
         return;
     }
-    
-    // Render filtered projects
-    filtered.forEach(project => {
+
+    projects.forEach(project => {
         loadTasksForProgress(project);
     });
 }
@@ -456,6 +444,13 @@ $(document).ready(function () {
     $("#searchProject").on("input", function() {
         const keyword = $(this).val();
         searchProjects(keyword);
+    });
+
+    $(".project-filter").on("click", function() {
+        $(".project-filter").removeClass("tab-active").addClass("text-slate-500");
+        $(this).addClass("tab-active").removeClass("text-slate-500");
+        currentFilter = $(this).data("status") || "all";
+        applyFilters();
     });
 
     $("#createProjectForm").on("submit", function(e) {

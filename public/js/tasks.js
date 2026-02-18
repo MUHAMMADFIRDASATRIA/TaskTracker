@@ -8,17 +8,40 @@ $(document).ready(function () {
     let projectDeadline = "-";
     let totalTasks = 0;
     let completedTasks = 0;
+    let projectProgress = 0;
+
+    
 
     function updateProjectUI(total, completed, deadlineStr) {
         const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
         const pendingTasks = total - completed;
+        const computedStatus = total === 0
+            ? "Pending"
+            : completed === total
+                ? "Completed"
+                : "Progress";
 
         $("#hero-percentage").text(`${percentage}%`);
         $("#stat-completed").text(completed);
         $("#stat-pending").text(pendingTasks);
-        $("#stat-deadline").text(deadlineStr);
-        $("#badge-deadline").text(deadlineStr);
         $("#badge-total").text(`${total} Tugas`);
+        $("#badge-status").text(computedStatus);
+
+        const normalizedDeadline =
+            deadlineStr && deadlineStr !== "-"
+                ? String(deadlineStr).replace("T", " ").replace(".000000Z", "")
+                : "-";
+
+        if (normalizedDeadline !== "-") {
+            const [datePart, timePart = ""] = normalizedDeadline.split(" ");
+            $("#badge-deadline").text(datePart || normalizedDeadline);
+            $("#stat-deadline").text(
+                timePart ? `${datePart} ${timePart}` : (datePart || normalizedDeadline)
+            );
+        } else {
+            $("#badge-deadline").text("-");
+            $("#stat-deadline").text("-");
+        }
 
         const circle = document.getElementById("progress-ring");
         if (circle) {
@@ -52,8 +75,8 @@ $(document).ready(function () {
 
                 const project = res.data;
 
-                $("#project-name").text(project.title);
                 $("#hero-title-main").text(project.title);
+                $("#badge-status").text(project.status ?? "pending")
 
                 $("#project-description").text(
                     project.description && project.description.trim()
@@ -61,7 +84,6 @@ $(document).ready(function () {
                         : "-"
                 );
                 projectDeadline = project.tenggat ?? "-";
-                $("#badge-status").text(project.status ?? "-");
                 updateProjectUI(totalTasks, completedTasks, projectDeadline);
             },
             error: function (xhr) {
@@ -81,20 +103,28 @@ $(document).ready(function () {
             headers: getAuthHeader(),
             success: function (res) {
                 const user = res.data;
-                $("#header-name").text(user.name);
-                
-                // Jika ada foto profile, tampilkan foto
-                if (user.profile_photo && user.profile_photo.trim() !== "") {
+                if (user && user.name && $("#header-name").length) {
+                    $("#header-name").text(user.name);
+                }
+
+                if (!$("#header-avatar").length) {
+                    return;
+                }
+
+                if (user && user.profile_photo && user.profile_photo.trim() !== "") {
                     $("#header-avatar")
                         .css({
                             "background-image": `url('${user.profile_photo}')`,
                             "background-size": "cover",
-                            "background-position": "center"
+                            "background-position": "center",
+                            "background-repeat": "no-repeat"
                         })
                         .text("");
                 } else {
-                    // Jika tidak ada foto, tampilkan inisial
-                    $("#header-avatar").text(user.name.charAt(0).toUpperCase());
+                    const initial = user && user.name ? user.name.charAt(0).toUpperCase() : "U";
+                    $("#header-avatar")
+                        .css("background-image", "none")
+                        .text(initial);
                 }
             },
             error: function (xhr) {
@@ -233,7 +263,7 @@ $(document).ready(function () {
     /* ======================
        UPDATE TASK
     ====================== */
-    function updateTask(taskId, data) {
+    function updateTask(taskId, data, shouldRefreshPage = false) {
         $.ajax({
             url: `${API_URL}/users/project/${projectId}/tasks/${taskId}`,
             method: "PUT",
@@ -241,7 +271,12 @@ $(document).ready(function () {
             contentType: "application/json",
             data: JSON.stringify(data),
             success: function () {
-                loadTasks();
+                if (shouldRefreshPage) {
+                    window.location.reload();
+                    return;
+                }
+                    loadTasks();
+                    loadProject();
             },
             error: function (xhr) {
                 console.error("Update Task Error:", xhr.responseText);
@@ -319,32 +354,32 @@ $(document).ready(function () {
         const dateStr = task.tenggat || '-';
 
         return `
-        <div class="task-item group relative bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 transition-all hover:border-slate-600/50 hover:bg-slate-800/60">
-            <div class="flex items-start gap-4">
+        <div class="task-item group relative bg-slate-800/40 border border-slate-700/50 rounded-lg p-2 transition-all hover:border-slate-600/50 hover:bg-slate-800/60">
+            <div class="flex items-start gap-2">
                 <!-- Checkbox -->
-                <div class="shrink-0 mt-1">
-                    <input type="checkbox" class="task-finish w-5 h-5 rounded border-2 border-slate-600 bg-slate-700/50 checked:bg-cyan-500 checked:border-cyan-500 cursor-pointer transition-all" data-id="${task.id}" ${isCompleted ? "checked" : ""}>
+                <div class="shrink-0 mt-0.5">
+                    <input type="checkbox" class="task-finish w-4 h-4 rounded border-2 border-slate-600 bg-slate-700/50 checked:bg-cyan-500 checked:border-cyan-500 cursor-pointer transition-all" data-id="${task.id}" ${isCompleted ? "checked" : ""}>
                 </div>
 
                 <!-- Content -->
                 <div class="flex-1 min-w-0">
                     <!-- Title -->
-                    <h4 class="font-semibold text-base text-slate-200 mb-1 ${isCompleted ? 'line-through opacity-60' : ''}">
+                    <h4 class="font-semibold text-sm text-slate-200 mb-0.5 ${isCompleted ? 'line-through opacity-60' : ''}">
                         ${task.title}
                     </h4>
 
                     <!-- Description -->
                     ${task.description ? `
-                        <p class="text-sm text-slate-400 mb-3 leading-relaxed ${isCompleted ? 'line-through opacity-50' : ''}">
+                        <p class="text-xs text-slate-400 mb-1.5 leading-relaxed ${isCompleted ? 'line-through opacity-50' : ''}">
                             ${task.description}
                         </p>
                     ` : ''}
 
                     <!-- Meta Info Row -->
-                    <div class="flex items-center gap-3 text-xs">
-                        <div class="flex items-center gap-1.5">
-                            <i data-lucide="check-circle" size="14" class="${isCompleted ? 'text-emerald-400' : 'text-blue-400'}"></i>
-                            <span class="px-2 py-0.5 rounded ${statusClass} text-xs font-medium">
+                    <div class="flex items-center gap-2 text-[11px]">
+                        <div class="flex items-center gap-1">
+                            <i data-lucide="check-circle" size="12" class="${isCompleted ? 'text-emerald-400' : 'text-blue-400'}"></i>
+                            <span class="px-1.5 py-0.5 rounded ${statusClass} text-[10px] font-medium">
                                 ${statusText}
                             </span>
                         </div>
@@ -352,22 +387,22 @@ $(document).ready(function () {
                 </div>
 
                 <!-- Priority Badge & Actions -->
-                <div class="shrink-0 flex items-start gap-2">
+                <div class="shrink-0 flex items-start gap-1">
                     <!-- Priority Badge -->
-                    <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide ${priority.pill}">
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full ${priority.dot}"></span>
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-tight ${priority.pill}">
+                        <span class="inline-flex items-center gap-1">
+                            <span class="w-1 h-1 rounded-full ${priority.dot}"></span>
                             ${priority.label}
                         </span>
                     </span>
 
                     <!-- Actions (show on hover) -->
                     <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="btn-edit p-1 rounded-md text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all" data-id="${task.id}">
-                            <i data-lucide="edit-3" size="13"></i>
+                        <button class="btn-edit p-0.5 rounded-md text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all" data-id="${task.id}">
+                            <i data-lucide="edit-3" size="12"></i>
                         </button>
-                        <button class="btn-delete p-1 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all" data-id="${task.id}">
-                            <i data-lucide="trash-2" size="13"></i>
+                        <button class="btn-delete p-0.5 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all" data-id="${task.id}">
+                            <i data-lucide="trash-2" size="12"></i>
                         </button>
                     </div>
                 </div>
@@ -385,7 +420,7 @@ $(document).ready(function () {
             const taskId = $(this).data("id");
             const finish = $(this).is(":checked");
 
-            updateTask(taskId, { finish: finish });
+                updateTask(taskId, { finish: finish });
         })
         .on("click", ".btn-delete", function () {
             deleteTask($(this).data("id"));

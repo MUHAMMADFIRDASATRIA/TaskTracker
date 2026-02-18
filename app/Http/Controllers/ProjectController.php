@@ -59,6 +59,12 @@ class ProjectController extends Controller
     {
         $user = $request->attributes->get('auth_user');
 
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'tenggat' => 'nullable|date'
+        ]);
+
         $title = $request->input('title');
         $description = $request->input('description');
         $tenggat = $request->input('tenggat');
@@ -91,6 +97,12 @@ class ProjectController extends Controller
             ], 403);
         }
 
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'tenggat' => 'nullable|date'
+        ]);
+        
         $data = [];
 
         if ($request->filled('title'))

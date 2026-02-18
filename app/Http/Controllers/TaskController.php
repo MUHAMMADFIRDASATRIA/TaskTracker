@@ -47,6 +47,13 @@ class TaskController extends Controller
             ], 403);
         }
 
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'priority' => 'nullable|in:low,medium,high',
+            'finish' => 'nullable|boolean'
+        ]);
+
         $title = $request->input('title');
         $description = $request->input('description');
         $priority = $request->input('priority');
@@ -94,6 +101,13 @@ class TaskController extends Controller
             ], 403);
         }
 
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'priority' => 'nullable|in:low,medium,high',
+            'finish' => 'nullable|boolean'
+        ]);
+        
         $data = [];
 
         if ($request->filled('title'))

@@ -118,7 +118,6 @@ $(document).ready(function () {
             method: "GET",
             headers: getAuthHeader(),
             success: function (res) {
-
                 const tasks = res.data ?? [];
                 const container = $("#tasks-list-container");
 
@@ -216,7 +215,7 @@ $(document).ready(function () {
                 $("#createTaskForm")[0].reset();
                 alert("Task berhasil ditambahkan");
 
-                loadTasks(); // reload task saja
+                window.location.href = `tasks.html?project_id=${projectId}`;
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
@@ -396,6 +395,118 @@ $(document).ready(function () {
             window.location.href = `EditTask.html?task_id=${taskId}&project_id=${projectId}`;
         });
 
+
+    /* ======================
+       LOAD TASK FOR EDITING
+    ====================== */
+    function loadTaskData(editTaskId, editProjectId) {
+        $.ajax({
+            url: `${API_URL}/users/project/${editProjectId}/tasks`,
+            method: "GET",
+            headers: getAuthHeader(),
+            success: function (res) {
+                const tasks = res.data || [];
+                const task = tasks.find(t => t.id == editTaskId);
+
+                if (!task) {
+                    alert("Task tidak ditemukan");
+                    return;
+                }
+
+                // Populate form
+                $("#task_id").val(task.id);
+                $("#task_title").val(task.title);
+                $("#notes").val(task.description);
+                $("#deadline").val(task.tenggat);
+                $("#priority").val(task.priority || "medium");
+                $("#finish").prop("checked", task.finish);
+                
+                // Update badge
+                $("#task-id-badge").text(`#TASK-${task.id}`);
+            },
+            error: function (xhr) {
+                console.error("Load Task Error:", xhr.responseText);
+                if (xhr.status === 403) {
+                    alert("Anda tidak memiliki akses ke task ini");
+                    window.location.href = "projects.html";
+                    return;
+                }
+                alert("Gagal memuat data task");
+            }
+        });
+    }
+
+    /* ======================
+       HANDLE EDIT TASK FORM SUBMIT
+    ====================== */
+    $("#editTaskForm").on("submit", function (e) {
+        e.preventDefault();
+
+        const title = $("#task_title").val().trim();
+        const description = $("#notes").val().trim();
+        const tenggat = $("#deadline").val();
+        const finish = $("#finish").is(":checked");
+        const priority = $("#priority").val();
+
+        if (!title) {
+            alert("Judul task tidak boleh kosong");
+            return;
+        }
+
+        const data = {
+            title: title,
+            description: description,
+            finish: finish,
+            priority: priority
+        };
+
+        if (tenggat) {
+            data.tenggat = tenggat;
+        }
+
+        $.ajax({
+            url: `${API_URL}/users/project/${editProjectId}/tasks/${editTaskId}`,
+            method: "PUT",
+            headers: getAuthHeader(),
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (res) {
+                console.log("Update Task Success:", res);
+                
+                // Show success modal
+                $("#successModal").removeClass("hidden").addClass("flex");
+                $("#btn-back-to-list").on("click", function() {
+                    window.location.href = `tasks.html?project_id=${editProjectId}`;
+                });
+                
+                // Auto redirect after 2 seconds
+                setTimeout(function() {
+                    window.location.href = `tasks.html?project_id=${editProjectId}`;
+                }, 2000);
+            },
+            error: function (xhr) {
+                console.error("Update Task Error:", xhr.responseText);
+                if (xhr.status === 403) {
+                    alert("Anda tidak memiliki akses untuk mengubah task ini");
+                    window.location.href = "projects.html";
+                    return;
+                }
+                alert("Gagal memperbarui task");
+            }
+        });
+    });
+
+    /* ======================
+       CHECK IF ON EDIT PAGE AND LOAD DATA
+    ====================== */
+    const urlParams = new URLSearchParams(window.location.search);
+    const editTaskId = urlParams.get('task_id');
+    const editProjectId = urlParams.get('project_id') || projectId;
+
+    if (editTaskId && editProjectId) {
+        // On edit page, load task data
+        loadTaskData(editTaskId, editProjectId);
+    }
 
     /* ======================
        INIT

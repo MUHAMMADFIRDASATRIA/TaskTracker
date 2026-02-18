@@ -201,7 +201,7 @@ function renderTaskTable(tasks) {
     if (tasks.length === 0) {
         $("#task-table-body").html(`
             <tr>
-                <td colspan="4" class="px-6 py-12 text-center">
+                <td colspan="5" class="px-8 py-12 text-center">
                     <div class="flex flex-col items-center gap-3">
                         <div class="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center border border-slate-700/50">
                             <i data-lucide="inbox" size="32" class="text-slate-600"></i>
@@ -234,30 +234,38 @@ function renderTaskTable(tasks) {
         
         return `
             <tr class="hover:bg-slate-800/30 transition-colors">
-                <td class="px-6 py-4">
-                    <div>
+                <td class="px-8 py-4">
+                    <div class="inline-flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-md bg-slate-700/50 border border-slate-600/40 flex items-center justify-center">
+                            <i data-lucide="check-square" size="12" class="text-cyan-300"></i>
+                        </span>
                         <p class="font-semibold text-slate-200 text-sm mb-1">${task.title}</p>
-                        <p class="text-xs text-slate-500">
-                            <i data-lucide="folder" size="10" class="inline"></i>
-                            ${task.projectTitle || 'Unknown Project'}
-                        </p>
                     </div>
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-8 py-4">
+                    <div class="inline-flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-md bg-slate-700/50 border border-slate-600/40 flex items-center justify-center">
+                            <i data-lucide="folder-closed" size="12" class="text-blue-300"></i>
+                        </span>
+                        <p class="font-semibold text-slate-200 text-sm mb-1">${task.projectTitle || 'Unknown Project'}</p>
+                    </div>
+                </td>                
+                <td class="px-8 py-4">
                     <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${priorityStyle.bg} border border-slate-700/30">
                         <div class="w-1.5 h-1.5 rounded-full ${priorityStyle.dot}"></div>
                         <span class="text-xs font-semibold ${priorityStyle.text} capitalize">${priority}</span>
                     </div>
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-8 py-4">
                     <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${statusStyle.bg} border border-slate-700/30">
                         <div class="w-1.5 h-1.5 rounded-full ${statusStyle.dot || 'bg-cyan-500'}"></div>
                         <span class="text-xs font-semibold ${statusStyle.text}">${statusStyle.label}</span>
                     </div>
                 </td>
-                <td class="px-6 py-4">
-                    <a href="tasks.html?project_id=${task.projectId}" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors">
+                <td class="px-8 py-4">
+                    <a href="tasks.html?project_id=${task.projectId}" class="inline-flex items-center gap-1 text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors">
                         Buka Task
+                        <i data-lucide="arrow-up-right" size="12"></i>
                     </a>
                 </td>
             </tr>

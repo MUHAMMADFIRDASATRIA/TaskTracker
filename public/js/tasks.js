@@ -8,9 +8,6 @@ $(document).ready(function () {
     let projectDeadline = "-";
     let totalTasks = 0;
     let completedTasks = 0;
-    let projectProgress = 0;
-
-    
 
     function updateProjectUI(total, completed, deadlineStr) {
         const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
@@ -76,7 +73,10 @@ $(document).ready(function () {
                 const project = res.data;
 
                 $("#hero-title-main").text(project.title);
-                $("#badge-status").text(project.status ?? "pending")
+                $("#badge-status").text(project.status ?? "Pending")
+                $("#back-to-project")
+                    .attr("href", `tasks.html?project_id=${projectId}`)
+                    .text(project.title);
 
                 $("#project-description").text(
                     project.description && project.description.trim()
@@ -511,7 +511,8 @@ $(document).ready(function () {
                 // Show success modal
                 $("#successModal").removeClass("hidden").addClass("flex");
                 $("#btn-back-to-list").on("click", function() {
-                    window.location.href = `tasks.html?project_id=${editProjectId}`;
+                    loadProject();
+                    loadTasks();
                 });
                 
                 // Auto redirect after 2 seconds

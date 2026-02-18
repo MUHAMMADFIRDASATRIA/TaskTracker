@@ -98,7 +98,7 @@
             <div class="flex items-center gap-4">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-2">
-                        Halo, <span id="welcome-name" class="text-cyan-400">User</span> 👋
+                        Halo, <span id="welcome-name" class="text-cyan-400">-</span>
                     </h1>
                     <p class="text-xs text-slate-500 mt-0.5">Berikut progres tugas dan produktivitas Anda hari ini</p>
                 </div>
@@ -202,52 +202,32 @@
                     <table class="w-full text-left">
                         <thead class="bg-slate-900/50 text-[10px] uppercase text-slate-500 font-bold tracking-[0.2em] border-b border-slate-800/50">
                             <tr>
-                                <th class="px-8 py-5">Detail Tugas</th>
+                                <th class="px-8 py-5">
+                                    <span class="inline-flex items-center gap-2">
+                                        <i data-lucide="clipboard-list" size="12"></i>
+                                        Detail Tugas
+                                    </span>
+                                </th>
+                                <th class="px-8 py-5">
+                                    <span class="inline-flex items-center gap-2">
+                                        <i data-lucide="folder" size="12"></i>
+                                        Proyek
+                                    </span>
+                                </th>
                                 <th class="px-8 py-5">Prioritas</th>
                                 <th class="px-8 py-5">Status</th>
                                 <th class="px-8 py-5">Action</th>
                             </tr>
                         </thead>
                         <tbody id="task-table-body" class="divide-y divide-slate-800/50">
-                            <!-- Contoh Baris Tugas Premium -->
-                            <tr class="hover:bg-slate-800/20 transition-colors group">
-                                <td class="px-8 py-5">
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-bold text-slate-200 group-hover:text-cyan-400 transition-colors">Integrasi Payment Gateway</span>
-                                        <span class="text-[10px] text-slate-500 font-medium uppercase mt-1">Proyek: E-Commerce App</span>
+                            <tr>
+                                <td colspan="5" class="px-8 py-12 text-center">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <div class="w-12 h-12 bg-slate-800/50 rounded-xl flex items-center justify-center border border-slate-700/50">
+                                            <i data-lucide="loader" size="20" class="text-cyan-400 animate-spin"></i>
+                                        </div>
+                                        <p class="text-sm text-slate-400 font-medium">Memuat tugas terbaru...</p>
                                     </div>
-                                </td>
-                                <td class="px-8 py-5">
-                                    <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">Tinggi</span>
-                                </td>
-                                <td class="px-8 py-5">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
-                                        <span class="text-xs font-bold text-slate-400">Dikerjakan</span>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-5">
-                                    <a href="tasks.html?project_id=1" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors">Buka Task</a>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-800/20 transition-colors group">
-                                <td class="px-8 py-5">
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-bold text-slate-200 group-hover:text-cyan-400 transition-colors">Fixing Bug UI Dashboard</span>
-                                        <span class="text-[10px] text-slate-500 font-medium uppercase mt-1">Proyek: TaskTracker</span>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-5">
-                                    <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">Sedang</span>
-                                </td>
-                                <td class="px-8 py-5">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                                        <span class="text-xs font-bold text-slate-400">Selesai</span>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-5">
-                                    <a href="tasks.html?project_id=1" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors">Buka Task</a>
                                 </td>
                             </tr>
                         </tbody>

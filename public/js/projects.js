@@ -99,6 +99,7 @@ function loadTasksForProgress(project) {
 function projectCard(p) {
     const progress = p.progress || 0;
     const tasks = p.tasksInfo || { total: 0, completed: 0 };
+    const statusKey = (p.status || "pending").toLowerCase();
     
     // Status Badges
     const statusMap = {
@@ -110,11 +111,29 @@ function projectCard(p) {
     };
     const sClass = statusMap[p.status?.toLowerCase()] || statusMap['pending'];
 
+    const rowBgMap = {
+        'pending': 'bg-slate-900/25 hover:bg-slate-900/45 border-slate-700/30',
+        'in progress': 'bg-cyan-500/5 hover:bg-cyan-500/10 border-cyan-500/20',
+        'progress': 'bg-cyan-500/5 hover:bg-cyan-500/10 border-cyan-500/20',
+        'completed': 'bg-emerald-500/5 hover:bg-emerald-500/10 border-emerald-500/20',
+        'on hold': 'bg-amber-500/5 hover:bg-amber-500/10 border-amber-500/20'
+    };
+    const rowBgClass = rowBgMap[statusKey] || rowBgMap['pending'];
+
+    const iconToneMap = {
+        'pending': 'bg-slate-900 border-slate-800 text-slate-500',
+        'in progress': 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400',
+        'progress': 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400',
+        'completed': 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+        'on hold': 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+    };
+    const iconToneClass = iconToneMap[statusKey] || iconToneMap['pending'];
+
     return `
-    <div class="project-row grid grid-cols-[1.5fr_1fr_1fr_0.5fr] gap-4 px-8 py-5 bg-transparent border-b border-slate-800/20 items-center fade-in hover:bg-slate-900/30 transition-all group">
+    <div class="project-row grid grid-cols-[1.5fr_1fr_1fr_0.5fr] gap-4 px-8 py-5 border-b items-center fade-in transition-all group ${rowBgClass}">
         <!-- Identitas -->
         <div class="flex items-center gap-4 min-w-0">
-            <div class="w-10 h-10 shrink-0 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-center text-slate-500">
+            <div class="w-10 h-10 shrink-0 rounded-lg flex items-center justify-center ${iconToneClass}">
                 <i data-lucide="folder" size="18"></i>
             </div>
             <div class="min-w-0">
@@ -123,7 +142,6 @@ function projectCard(p) {
                     <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${sClass} border border-current opacity-70">
                         ${p.status || 'Pending'}
                     </span>
-                    <span class="text-[10px] text-slate-600 font-medium truncate">${p.description || 'Tidak ada deskripsi proyek'}</span>
                 </div>
             </div>
         </div>
@@ -145,7 +163,6 @@ function projectCard(p) {
                 <i data-lucide="calendar" size="14" class="text-slate-600"></i>
                 <span class="text-xs font-bold">${p.tenggat || 'N/A'}</span>
             </div>
-            <span class="text-[10px] text-slate-600 font-medium uppercase tracking-widest ml-5">Tenggat Akhir</span>
         </div>
 
         <!-- Kontrol -->

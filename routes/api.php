@@ -25,6 +25,7 @@ Route::middleware('auth.api')->group(function(){
     Route::DELETE('/users/project/{projectId}', [ProjectController::class,'deleteProject']);
 
     Route::GET('/users/project/{projectId}/tasks', [TaskController::class,'showTasks']);
+    Route::GET('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'getTaskById']);
     Route::POST('/users/project/{projectId}/tasks/create', [TaskController::class,'createTask']);
     Route::PUT('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'updateTask']);
     Route::DELETE('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'deleteTask']);

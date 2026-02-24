@@ -32,6 +32,38 @@ class TaskController extends Controller
         ]);
     }
 
+    public function getTaskById(Request $request, $projectId, $taskId)
+    {
+        $user = $request->attributes->get('auth_user');
+        $project = Project::where('id', $projectId)
+                    ->where('user_id', $user->id)
+                    ->first();
+
+        if (!$project)
+        {
+            return response()->json([
+                'success'=>false,
+                'message'=>'gada projectnya bro'
+            ]);
+        }
+
+        $task = task::where('id', $taskId)
+                    ->where('project_id', $projectId)
+                    ->first();
+
+        if (!$task) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task tidak ditemukan di project ini'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $task
+        ]);
+    }
+
     public function createTask(Request $request, $projectId)
     {
         $user = $request->attributes->get('auth_user');

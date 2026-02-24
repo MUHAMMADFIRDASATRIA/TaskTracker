@@ -58,6 +58,13 @@ class ProfileController extends Controller
         $data['profile_photo_path'] = $path;
         }
 
+        if ($request->boolean('remove_photo') && !$request->hasFile('profile_photo')) {
+            if ($user->profile_photo_path) {
+                Storage::disk('public')->delete($user->profile_photo_path);
+            }
+            $data['profile_photo_path'] = null;
+        }
+
         $user->update($data);
 
         return response()->json([

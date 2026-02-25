@@ -42,6 +42,11 @@ class User extends Authenticatable
         return $this->hasMany(Project::class);
     }
 
+    public function projectMemberships()
+    {
+        return $this->hasMany(ProjectMembers::class);
+    }
+
     public function tasks()
     {
         return $this->hasManyThrough(Task::class, Project::class);

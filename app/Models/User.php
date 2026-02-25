@@ -39,8 +39,15 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->hasMany(Project::class);
+        return $this->hasMany(project::class);
     }
+
+    // public function projects()
+    // {
+    //     return $this->hasMany(project::class, 'ProjectMembers')
+    //                 ->withPivot('role')
+    //                 ->withTimestamps();
+    // }
 
     public function projectMemberships()
     {

@@ -14,6 +14,10 @@ class ProjectController extends Controller
 
         $query = project::where('user_id', $user->id);
 
+        // $query = project::where('members', function ($q) use ($user) {
+        //     $q->where('user_id', $user->id);
+        // });
+
         // $search = $request->input('search');
 
         if ($request->filled('search'))

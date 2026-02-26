@@ -32,6 +32,33 @@ class TaskController extends Controller
         ]);
     }
 
+    public function toggleFinish(Request $request, $projectId, $taskId)
+    {
+        $request->validate([
+            'finish' => 'required|boolean'
+        ]);
+
+        $task = task::where('id', $taskId)
+                    ->where('project_id', $projectId)
+                    ->first();
+
+        if (!$task) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task tidak ditemukan di project ini'
+            ], 404);
+        }
+
+        $task->update(['finish' => filter_var($request->input('finish'), FILTER_VALIDATE_BOOLEAN)]);
+
+        $this->updateProjectStatus($projectId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status task berhasil diperbarui'
+        ]);
+    }
+
     public function getTaskById(Request $request, $projectId, $taskId)
     {
         $user = $request->attributes->get('auth_user');

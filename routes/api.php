@@ -35,9 +35,10 @@ Route::middleware('auth.api')->group(function(){
 
     Route::GET('/users/project/{projectId}/tasks', [TaskController::class,'showTasks'])->middleware('project.role:member');
     Route::GET('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'getTaskById'])->middleware('project.role:member');
-    Route::POST('/users/project/{projectId}/tasks/create', [TaskController::class,'createTask'])->middleware('project.role:member');
-    Route::PUT('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'updateTask'])->middleware('project.role:member');
-    Route::DELETE('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'deleteTask'])->middleware('project.role:member');
+    Route::POST('/users/project/{projectId}/tasks/create', [TaskController::class,'createTask'])->middleware('project.role:leader');
+    Route::PUT('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'updateTask'])->middleware('project.role:leader');
+    Route::DELETE('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'deleteTask'])->middleware('project.role:leader');
+    Route::PATCH('/users/project/{projectId}/tasks/{taskId}/finish', [TaskController::class,'updateTaskStatus'])->middleware('project.role:member');
 });
 
 

@@ -37,17 +37,17 @@ class User extends Authenticatable
         return null;
     }
 
-    public function projects()
-    {
-        return $this->hasMany(project::class);
-    }
-
     // public function projects()
     // {
-    //     return $this->hasMany(project::class, 'ProjectMembers')
-    //                 ->withPivot('role')
-    //                 ->withTimestamps();
+    //     return $this->hasMany(project::class);
     // }
+
+    public function projects()
+    {
+        return $this->hasMany(project::class, 'ProjectMembers')
+                    ->withPivot('role')
+                    ->withTimestamps();
+    }
 
     public function projectMemberships()
     {

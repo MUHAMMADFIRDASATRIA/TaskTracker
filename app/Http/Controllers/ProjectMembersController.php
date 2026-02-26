@@ -12,7 +12,11 @@ class ProjectMembersController extends Controller
     public function showProjectMembers($projectId)
     {
         $members = ProjectMembers::where('project_id', $projectId)->with('user')->get();
-        return response()->json($members);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $members  // ← wrap dalam 'data'
+        ]);
     }
 
     public function removeProjectMember($projectId, $userId)

@@ -14,11 +14,10 @@ class ProjectInvitationController extends Controller
     {
         // Validasi input
         $request->validate([
-            'project_id' => 'required|exists:projects,id',
-            'invited_user_id' => 'required|exists:users,id',
-            'type' => 'required|in:email,username',
+            'user_id' => 'required|exists:users,id',
         ]);
 
+        $authUser = $request->attributes->get('auth_user');
         $project = Project::findOrFail($projectId);
 
         $alreadyMember = ProjectMembers::where('project_id', $projectId)
@@ -31,37 +30,47 @@ class ProjectInvitationController extends Controller
 
         $invitation = ProjectInvitations::create([
             'project_id' => $projectId,
-            'invited_by' => $request->user()->id,
-            'invited_user_id' => $request->invited_user_id,
-            'type' => $request->type,
+            'invited_by' => $authUser->id,
+            'invited_user_id' => $request->user_id,
+            'type' => 'direct',
             'status' => 'pending',
         ]);
 
-        return response()->json(['message' => 'Undangan berhasil dikirim.', 'invitation' => $invitation]);
+        ProjectMembers::create([
+            'project_id' => $projectId,
+            'user_id' => $request->user_id,
+            'role' => 'member',
+        ]);
+
+        return response()->json(['message' => 'Undangan berhasil dikirim.', 'data' => $invitation]);
     }
 
     public function generateProjectCode($projectId)
     {
-        $project = Project::findOrFail($projectId);
+        $authUser = request()->attributes->get('auth_user');
 
-        request()->validate([
-            'project_id' => 'required|exists:projects,id',
-        ]);
+        $generatedCode = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
 
-        $generatedCode = strtoupper(substr(md5(uniqid(rand(), true)), 0, 10));
-
+        ProjectInvitations::where('project_id', $projectId)
+        ->where('type', 'code')
+        ->where('status', 'pending')
+        ->update(['status' => 'expired']);
+        
         $invitation = ProjectInvitations::create([
             'project_id' => $projectId,
-            'invited_by' => request()->user()->id,
+            'invited_by' => $authUser->id,
             'type' => 'code',
             'code' => $generatedCode,
             'status' => 'pending',
-            'expires_at' => now()->addDays(),
+            'expires_at' => now()->addDays(1),
         ]);
 
         return response()->json(['message' => 'Kode undangan berhasil dibuat.', 
-        'code' => $generatedCode,
-        'data' => $invitation], 201);
+        'success' => true,
+        'data' => [
+            'code' => $generatedCode,
+            'expires_at' => $invitation->expires_at
+        ]], 201);
     }
 
     public function joinByCode(Request $request)
@@ -70,6 +79,8 @@ class ProjectInvitationController extends Controller
         $request->validate([
             'code' => 'required|exists:project_invitations,code',
         ]);
+
+        $authUser = $request->attributes->get('auth_user');
 
         $invitation = ProjectInvitations::where('code', $request->code)
             ->where('type', 'code')
@@ -86,18 +97,16 @@ class ProjectInvitationController extends Controller
         }
 
         $alreadyMember = ProjectMembers::where('project_id', $invitation->project_id)
-            ->where('user_id', $request->user()->id)
+            ->where('user_id', $authUser->id)
             ->exists();
 
         if ($alreadyMember) {
             return response()->json(['message' => 'Anda sudah menjadi anggota proyek.'], 400);
         }
 
-        $invitation->update(['status' => 'accepted']);
-
         ProjectMembers::create([
             'project_id' => $invitation->project_id,
-            'user_id' => $request->user()->id,
+            'user_id' => $authUser->id,
             'role' => 'member',
         ]);
 

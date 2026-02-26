@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\project;
 use App\Models\task;
+use App\Models\ProjectMembers;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -12,21 +13,19 @@ class ProjectController extends Controller
     {
         $user = $request->attributes->get('auth_user');
 
-        $query = project::where('user_id', $user->id);
+        $search = $request->input('search');
 
-        // $query = project::where('members', function ($q) use ($user) {
-        //     $q->where('user_id', $user->id);
-        // });
+        // Query projects where the user is owner OR a member
+        $query = project::query()
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
+            ->orWhereHas('members', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
 
-        // $search = $request->input('search');
-
-        if ($request->filled('search'))
-        {
-            $query = project::query()
-                ->where('user_id', $user->id)
-                ->when($request->search, function ($q) use ($request) {
-                    $q->where('title', 'ILIKE', "%{$request->search}%");
-                });
+        if ($search) {
+            $query->where('title', 'like', "%{$search}%");
         }
 
         $projects = $query->get();
@@ -80,6 +79,18 @@ class ProjectController extends Controller
             'status' => 'pending', // Default status
             'tenggat' => $tenggat
         ]);
+
+        // Ensure the creator is added as leader in project members
+        try {
+            ProjectMembers::create([
+                'user_id' => $user->id,
+                'project_id' => $project->id,
+                'role' => 'leader',
+            ]);
+        } catch (\Exception $e) {
+            // log but don't block response
+            logger()->error('Failed to create project member for leader: ' . $e->getMessage());
+        }
 
         return response()->json([
             'success'=>true,

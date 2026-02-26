@@ -27,9 +27,9 @@ Route::middleware('auth.api')->group(function(){
     Route::GET('/users/project/{projectId}/members', [ProjectMembersController::class,'showProjectMembers'])->middleware('project.role:member');
     Route::DELETE('/users/project/{projectId}/members/{userId}', [ProjectMembersController::class,'removeProjectMember'])->middleware('project.role:leader');
 
-    Route::GET('/users/project', [ProjectController::class,'showProject'])->middleware('project.role:member');
+    Route::GET('/users/project', [ProjectController::class,'showProject']);
     Route::GET('/users/project/{projectId}', [ProjectController::class,'getProjectById'])->middleware('project.role:member');
-    Route::POST('/users/project/create', [ProjectController::class,'createProject'])->middleware('project.role:leader');
+    Route::POST('/users/project/create', [ProjectController::class,'createProject']);
     Route::PUT('/users/project/{projectId}/update', [ProjectController::class,'updateProject'])->middleware('project.role:leader');
     Route::DELETE('/users/project/{projectId}', [ProjectController::class,'deleteProject'])->middleware('project.role:leader');
 

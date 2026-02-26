@@ -9,26 +9,19 @@ use Illuminate\Http\Request;
 
 class ProjectMembersController extends Controller
 {
-    public function showMembers (Request $request, $projectId)
+    public function showProjectMembers($projectId)
     {
-        $user = $request->attributes->get('auth_user');
+        $members = ProjectMembers::where('project_id', $projectId)->with('user')->get();
+        return response()->json($members);
+    }
 
-        $project = project::where('id', $projectId)
-                    ->where('user_id', $user->id)
-                    ->first();
-
-        if (!$project) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Project tidak ditemukan atau tidak memiliki akses'
-            ], 403);
+    public function removeProjectMember($projectId, $userId)
+    {
+        $member = ProjectMembers::where('project_id', $projectId)->where('user_id', $userId)->first();
+        if (!$member) {
+            return response()->json(['message' => 'Anggota tidak ditemukan.'], 404);
         }
-
-        $members = $project->members()->with('user')->get();
-
-        return response()->json([
-            'success'=>true,
-            'data'=>$members
-        ]);
+        $member->delete();
+        return response()->json(['message' => 'Anggota berhasil dihapus.']);
     }
 }

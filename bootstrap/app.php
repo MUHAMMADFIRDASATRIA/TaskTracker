@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\ApiTokenAuth;
+use App\Http\Middleware\ProjectRoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,7 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'auth.api'=>ApiTokenAuth::class
+            'auth.api'=>ApiTokenAuth::class,
+            'project.role'=>ProjectRoleMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

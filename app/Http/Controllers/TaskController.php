@@ -12,7 +12,6 @@ class TaskController extends Controller
     {
         $user = $request->attributes->get('auth_user');
         $project = Project::where('id', $projectId)
-                    ->where('user_id', $user->id)
                     ->first();
 
 
@@ -63,7 +62,6 @@ class TaskController extends Controller
     {
         $user = $request->attributes->get('auth_user');
         $project = Project::where('id', $projectId)
-                    ->where('user_id', $user->id)
                     ->first();
 
         if (!$project)

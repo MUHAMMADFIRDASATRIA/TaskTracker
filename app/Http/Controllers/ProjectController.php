@@ -12,7 +12,7 @@ class ProjectController extends Controller
     public function showProject (Request $request)
     {
         $user = $request->attributes->get('auth_user');
-
+        
         $search = $request->input('search');
 
         // Query projects where the user is owner OR a member
@@ -40,10 +40,8 @@ class ProjectController extends Controller
     public function getProjectById (Request $request, $projectId)
     {
         $user = $request->attributes->get('auth_user');
-
         $project = project::where('id', $projectId)
-                    ->where('user_id', $user->id)
-                    ->first();
+        ->first();
 
         if (!$project) {
             return response()->json([

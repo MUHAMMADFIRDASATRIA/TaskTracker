@@ -26,31 +26,29 @@ class TaskController extends Controller
         $tasks = task::where('project_id', $projectId)->get();
 
         return response()->json([
-            'success' => true,
+            'success' => true, 
             'data' => $tasks
         ]);
     }
 
-    public function toggleFinish(Request $request, $projectId, $taskId)
+    public function toggleFinish(Request $request, $taskId)
     {
         $request->validate([
             'finish' => 'required|boolean'
         ]);
 
-        $task = task::where('id', $taskId)
-                    ->where('project_id', $projectId)
-                    ->first();
+        $task = task::where('id', $taskId)->first();
 
         if (!$task) {
             return response()->json([
                 'success' => false,
-                'message' => 'Task tidak ditemukan di project ini'
+                'message' => 'Task tidak ditemukan'
             ], 404);
         }
 
         $task->update(['finish' => filter_var($request->input('finish'), FILTER_VALIDATE_BOOLEAN)]);
 
-        $this->updateProjectStatus($projectId);
+        $this->updateProjectStatus($task->project_id);
 
         return response()->json([
             'success' => true,

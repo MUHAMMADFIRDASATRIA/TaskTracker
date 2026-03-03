@@ -44,7 +44,7 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->hasMany(project::class, 'ProjectMembers')
+        return $this->belongsToMany(project::class, 'project_members', 'user_id', 'project_id')
                     ->withPivot('role')
                     ->withTimestamps();
     }

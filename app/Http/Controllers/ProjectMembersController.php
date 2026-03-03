@@ -15,7 +15,7 @@ class ProjectMembersController extends Controller
         
         return response()->json([
             'success' => true,
-            'data' => $members  // ← wrap dalam 'data'
+            'data' => $members 
         ]);
     }
 

@@ -9,33 +9,33 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
-    public function showProject (Request $request)
-    {
-        $user = $request->attributes->get('auth_user');
+    // public function showProject (Request $request)
+    // {
+    //     $user = $request->attributes->get('auth_user');
         
-        $search = $request->input('search');
+    //     $search = $request->input('search');
 
-        // Query projects where the user is owner OR a member
-        $query = project::query()
-            ->where(function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })
-            ->orWhereHas('members', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            });
+    //     // Query projects where the user is owner OR a member
+    //     $query = project::query()
+    //         ->where(function ($q) use ($user) {
+    //             $q->where('user_id', $user->id);
+    //         })
+    //         ->orWhereHas('members', function ($q) use ($user) {
+    //             $q->where('user_id', $user->id);
+    //         });
 
-        if ($search) {
-            $query->where('title', 'like', "%{$search}%");
-        }
+    //     if ($search) {
+    //         $query->where('title', 'like', "%{$search}%");
+    //     }
 
-        $projects = $query->get();
+    //     $projects = $query->get();
 
-        return response()->json([
-            'success'=>true,
-            'data' =>$projects
-        ]);
+    //     return response()->json([
+    //         'success'=>true,
+    //         'data' =>$projects
+    //     ]);
 
-    }
+    // }
 
     public function getProjectById (Request $request, $projectId)
     {

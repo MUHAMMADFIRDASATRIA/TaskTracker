@@ -45,7 +45,7 @@ function loadProfileHeader() {
 =========================== */
 function loadProjects() {
     $.ajax({
-        url: `${API_URL}/users/project`,
+        url: `${API_URL}/project/list`,
         method: "GET",
         headers: getAuthHeader(),
         success: function (res) {

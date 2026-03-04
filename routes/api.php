@@ -32,6 +32,7 @@ Route::middleware('auth.api')->group(function(){
     Route::DELETE('/{model}/{id}', [DeleteController::class,'delete']);
 
     Route::POST('/{model}/{id}/{action}', [InviteController::class,'handleAction']);
+    Route::PATCH('tasks/{taskId}/finish', [TaskController::class,'toggleFinish'])->middleware('project.role:member');
 
     //Route::GET('/project/{Id}/members', [ProjectMembersController::class,'showProjectMembers'])->middleware('project.role:member');
     //Route::DELETE('/project/{Id}/members/{userId}', [ProjectMembersController::class,'removeProjectMember'])->middleware('project.role:leader');
@@ -60,9 +61,7 @@ Route::middleware('auth.api')->group(function(){
     //Route::POST('/users/project/{projectId}/tasks/create', [TaskController::class,'createTask'])->middleware('project.role:leader');
     //Route::PUT('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'updateTask'])->middleware('project.role:leader');
     //Route::DELETE('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'deleteTask'])->middleware('project.role:leader');
-    Route::PATCH('tasks/{taskId}/finish', [TaskController::class,'toggleFinish'])->middleware('project.role:member');
 });
-
 
 
 

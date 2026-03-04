@@ -8,21 +8,23 @@ use Illuminate\Support\Facades\DB;
 class ShowController extends Controller
 {
     private array $allowedModels = ['project', 'tasks', 'profile', 'invitations', 'members'];
+
     public function showList(Request $request, $model)
     {
-        if(!in_array($model, $this->allowedModels)){
-            return response()->json([
-                'success'=>false,
-                'message'=>'model tidak valid'
-            ],400);
+        if (!$this->isModelAllowed($model)) {
+            return $this->errorResponse('model tidak valid', 400);
         }
 
-        return $this->{$model}($request);
+        $user = $this->authUser($request);
+        if (!$user) {
+            return $this->errorResponse('Unauthorized', 401);
+        }
+
+        return $this->{$model}($request, $user);
     }
 
-    private function project (Request $request)
+    private function project (Request $request, $user)
     {
-        $user = $request->attributes->get('auth_user');
         $search = $request->input('search');
 
         $projects = $user->projects()
@@ -35,9 +37,8 @@ class ShowController extends Controller
         ]);
     }
 
-    private function tasks (Request $request)
+    private function tasks (Request $request, $user)
     {
-        $user = $request->attributes->get('auth_user');
         $projectId = $request->query('project_id');
         $search = $request->input('search');
 
@@ -54,10 +55,8 @@ class ShowController extends Controller
         ]);
     }
 
-    private function profile (Request $request)
+    private function profile (Request $request, $user)
     {
-        $user = $request->attributes->get('auth_user');
-
         return response()->json([
             'success' => true,
             'data' => [
@@ -69,10 +68,8 @@ class ShowController extends Controller
         ], 201);
     }
 
-    private function invitations(Request $request)
+    private function invitations(Request $request, $user)
     {
-        $user = $request->attributes->get('auth_user');
-
         $invitations = DB::table('project_invitations as pi')
             ->join('projects as p', 'p.id', '=', 'pi.project_id')
             ->join('users as u', 'u.id', '=', 'pi.invited_by')
@@ -95,25 +92,18 @@ class ShowController extends Controller
         ]);
     }
 
-    private function members(Request $request)
+    private function members(Request $request, $user)
     {
-        $user = $request->attributes->get('auth_user');
         $projectId = $request->query('project_id');
 
         if (!$projectId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'project_id wajib diisi'
-            ], 422);
+            return $this->errorResponse('project_id wajib diisi', 422);
         }
 
         $project = $user->projects()->where('projects.id', $projectId)->first();
 
         if (!$project) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Project tidak ditemukan atau tidak memiliki akses'
-            ], 404);
+            return $this->errorResponse('Project tidak ditemukan atau tidak memiliki akses', 404);
         }
 
         $members = $project->members()->with('user')->get();
@@ -122,5 +112,23 @@ class ShowController extends Controller
             'success' => true,
             'data' => $members
         ]);
+    }
+
+    private function isModelAllowed(string $model): bool
+    {
+        return in_array($model, $this->allowedModels, true);
+    }
+
+    private function authUser(Request $request)
+    {
+        return $request->attributes->get('auth_user');
+    }
+    
+    private function errorResponse(string $message, int $status)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+        ], $status);
     }
 }

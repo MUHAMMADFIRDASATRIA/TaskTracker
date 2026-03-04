@@ -8,7 +8,7 @@ class DetailController extends Controller
 {
     public function getById(Request $request, $model, $id)
     {
-        if(!in_array($model, ['project', 'tasks', 'profile'])){
+        if(!in_array($model, ['project', 'tasks', 'profile', 'members'])){
             return response()->json([
                 'success'=>false,
                 'message'=>'model tidak valid'
@@ -50,6 +50,26 @@ class DetailController extends Controller
         return response()->json([
             'success'=>true,
              'data'=>$task
+        ]);
+    }
+
+    private function members (Request $request, $id)
+    {
+        $user = $request->attributes->get('auth_user');
+        $project = $user->projects()->where('projects.id', $id)->first();
+
+        if (!$project) {
+            return response()->json([
+                'success'=>false,
+                'message'=>'Project tidak ditemukan atau tidak memiliki akses'
+            ], 404);
+        }
+
+        $members = $project->members()->with('user')->get();
+
+        return response()->json([
+            'success'=>true,
+             'data'=>$members
         ]);
     }
 }

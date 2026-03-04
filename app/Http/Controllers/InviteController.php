@@ -9,18 +9,22 @@ class InviteController extends Controller
 {
     private array $actionMap = [
         'invite'        => 'invite',
-        'generate-code' => 'generateCode',
+        'generateCode'  => 'generateCode',
         'accept'        => 'accept',
         'decline'       => 'decline',
         'join'          => 'join',
     ];
 
+    private $model = [
+        'project' => 'project',
+    ];
+
     public function handleAction(Request $request, $model, $id, $action)
     {
-        if (!isset($this->actionMap[$action])) {
+        if (!isset($this->actionMap[$action] ) || !isset($this->model[$model])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Action tidak valid'
+                'message' => 'Action tidak valid atau model tidak valid'
             ], 400);
         }
 

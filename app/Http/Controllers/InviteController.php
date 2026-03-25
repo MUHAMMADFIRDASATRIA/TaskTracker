@@ -9,7 +9,7 @@ class InviteController extends Controller
 {
     private array $actionMap = [
         'invite'        => 'invite',
-        'generateCode'  => 'generateCode',
+        'generate-code' => 'generateCode',
         'accept'        => 'accept',
         'decline'       => 'decline',
         'join'          => 'join',
@@ -85,6 +85,17 @@ class InviteController extends Controller
 
         if ($alreadyMember) {
             return response()->json(['success' => false, 'message' => 'User sudah menjadi anggota proyek.'], 400);
+        }
+
+        $pendingInvitation = DB::table('project_invitations')
+            ->where('project_id', $projectId)
+            ->where('invited_user_id', $request->user_id)
+            ->where('type', 'direct')
+            ->where('status', 'pending')
+            ->exists();
+
+        if ($pendingInvitation) {
+            return response()->json(['success' => false, 'message' => 'Undangan sudah dikirim dan masih menunggu respons dari user.'], 400);
         }
 
         $invitationId = DB::table('project_invitations')->insertGetId([

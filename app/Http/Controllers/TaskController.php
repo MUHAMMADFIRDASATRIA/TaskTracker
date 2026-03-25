@@ -37,6 +37,8 @@ class TaskController extends Controller
             'finish' => 'required|boolean'
         ]);
 
+        $user = $request->attributes->get('auth_user');
+
         $task = task::where('id', $taskId)->first();
 
         if (!$task) {
@@ -44,6 +46,14 @@ class TaskController extends Controller
                 'success' => false,
                 'message' => 'Task tidak ditemukan'
             ], 404);
+        }
+
+        $project = $user->projects()->where('projects.id', $task->project_id)->first();
+        if (!$project) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak memiliki akses ke task ini'
+            ], 403);
         }
 
         $task->update(['finish' => filter_var($request->input('finish'), FILTER_VALIDATE_BOOLEAN)]);

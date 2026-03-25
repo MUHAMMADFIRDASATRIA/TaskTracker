@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\ProjectMembers;
+use App\Models\task;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,17 @@ class ProjectRoleMiddleware
     {
         // try common route param names
         $projectId = $request->route('projectId') ?? $request->route('id');
+
+        if (!$projectId) {
+            $taskId = $request->route('taskId');
+            if ($taskId) {
+                $task = task::find($taskId);
+                if (!$task) {
+                    return response()->json(['message' => 'Task tidak ditemukan.'], 404);
+                }
+                $projectId = $task->project_id;
+            }
+        }
 
         // get authenticated user set by ApiTokenAuth
         $authUser = $request->attributes->get('auth_user');

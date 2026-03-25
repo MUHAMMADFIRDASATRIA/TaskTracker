@@ -27,7 +27,25 @@ class ShowController extends Controller
 
         $projects = $user->projects()
             ->when($search, fn($q) => $q->where('title', 'like', "%{$search}%"))
-            ->get();
+            ->with(['tasks', 'members'])
+            ->get()
+            ->map(function ($project) use ($user) {
+                $tasks    = $project->tasks;
+                $total    = $tasks->count();
+                $done     = $tasks->where('finish', true)->count();
+                $myMember = $project->members->firstWhere('user_id', $user->id);
+
+                return [
+                    'id'          => $project->id,
+                    'title'       => $project->title,
+                    'description' => $project->description,
+                    'tenggat'     => $project->tenggat,
+                    'status'      => $project->status,
+                    'progress'    => $total > 0 ? (int) round($done / $total * 100) : 0,
+                    'taskCount'   => $total,
+                    'role'        => $myMember?->role ?? 'member',
+                ];
+            });
 
         return $this->success($projects);
     }
@@ -37,6 +55,13 @@ class ShowController extends Controller
         $user = $request->attributes->get('auth_user');
         $projectId = $request->query('project_id');
         $search = $request->input('search');
+
+        if ($projectId) {
+            $project = $user->projects()->where('projects.id', $projectId)->first();
+            if (!$project) {
+                return $this->error('Project tidak ditemukan atau tidak memiliki akses', 403);
+            }
+        }
 
         $tasks = $user->projects()
             ->when($projectId, fn($q) => $q->where('projects.id', $projectId))
@@ -60,7 +85,7 @@ class ShowController extends Controller
                 'email' => $user->email,
                 'profile_photo' => $user->profile_photo
             ]
-        ], 201);
+        ], 200);
     }
 
     private function invitations(Request $request)

@@ -1,29 +1,28 @@
 <?php
 
 use App\Http\Controllers\DetailController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
-use App\Http\Controllers\ProjectInvitationController;
-use App\Http\Controllers\ProjectMembersController;
 use App\Http\Controllers\CreateController;
 use App\Http\Controllers\ShowController;
 use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\DeleteController;
 use App\Http\Controllers\InviteController;
 
-// Route::post('/users', [UserController::class,'createUser']);
+// use App\Http\Controllers\ProfileController;
+// use App\Http\Controllers\ProjectController;
+// use App\Http\Controllers\ProjectInvitationController;
+// use App\Http\Controllers\ProjectMembersController;
+
+
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
-
-
 
 Route::middleware('auth.api')->group(function(){
 
     Route::post('/logout', [UserController::class, 'logout']);
-
 
     Route::GET('/{model}/show', [ShowController::class,'showList']);
     Route::POST('/{model}/create', [CreateController::class,'create']);
@@ -34,6 +33,7 @@ Route::middleware('auth.api')->group(function(){
     Route::POST('/{model}/{id}/{action}', [InviteController::class,'handleAction']);
     Route::PATCH('tasks/{taskId}/finish', [TaskController::class,'toggleFinish'])->middleware('project.role:member');
 
+    // Route::post('/users', [UserController::class,'createUser']);
     //Route::GET('/project/{Id}/members', [ProjectMembersController::class,'showProjectMembers'])->middleware('project.role:member');
     //Route::DELETE('/project/{Id}/members/{userId}', [ProjectMembersController::class,'removeProjectMember'])->middleware('project.role:leader');
 
@@ -53,8 +53,6 @@ Route::middleware('auth.api')->group(function(){
     //Route::DELETE('/users/project/{projectId}', [ProjectController::class,'deleteProject'])->middleware('project.role:leader');
    
     // Route::GET('/project/list', [TaskController::class,'showTasks'])->middleware('project.role:member');
-
- 
    
     //Route::GET('/users/project/{projectId}/tasks', [TaskController::class,'showTasks'])->middleware('project.role:member');
     //Route::GET('/users/project/{projectId}/tasks/{taskId}', [TaskController::class,'getTaskById'])->middleware('project.role:member');
